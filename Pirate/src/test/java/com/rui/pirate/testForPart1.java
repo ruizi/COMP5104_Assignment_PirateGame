@@ -224,6 +224,69 @@ public class testForPart1 {
     }
 
     @Test
+    public void testForRow68() {//score set of 8 monkeys over several rolls (SC 4600 because of FC is coin and full chest)
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"monkey", "monkey", "parrot", "monkey", "monkey", "sword", "sword", "parrot"};
+        String input = "2 " + " 1,2,3,4,5,6 " + " monkey,monkey " + "2 " + " 1,2,4,5,7,8 " + " monkey,monkey " + "1";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(4600, player.playerRound(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow69() {//score a set of 2 diamonds over 2 rolls with FC is diamond (SC 400)
+        fortuneCard = "Diamond";
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"diamond", "parrot", "parrot", "monkey", "monkey", "skull", "skull", "parrot"};
+        String input = "2 " + " 1,2,3 " + " diamond,sword,sword " + "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(400, player.playerRound(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow70() {//score a set of 3 diamonds over 2 rolls (SC 500)
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"diamond", "diamond", "parrot", "monkey", "monkey", "skull", "skull", "parrot"};
+        String input = "2 " + "1,2 " + "diamond,monkey,monkey,parrot " + "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(500, player.playerRound(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow71() {//score a set of 3 coins over 2 rolls  (SC 600)
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"coin", "coin", "parrot", "monkey", "monkey", "skull", "skull", "parrot"};
+        String input = "2 " + "1,2 " + "coin,monkey,monkey,parrot " + "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(600, player.playerRound(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow72() {//score a set of 3 coins over 2 rolls  with FC is diamond (SC 500)
+        fortuneCard = "Diamond";
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"coin", "coin", "parrot", "monkey", "monkey", "skull", "skull", "parrot"};
+        String input = "2 " + "1,2 " + "coin,monkey,monkey,parrot " + "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(500, player.playerRound(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow73() {//score a set of 4 monkeys and a set of 3 coins (including the COIN fortune card) (SC 600)
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"coin", "coin", "monkey", "monkey", "monkey", "skull", "skull", "monkey"};
+        String input = "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(600, player.playerRound(card, dieRoll, game));
+    }
+
+
+    @Test
     public void testForRow75() {//get 7 swords on first roll, try to roll the 8 die by itself -> interface reports not allowed
         String[] dieRoll = new String[]{"sword", "sword", "sword", "sword", "sword", "sword", "sword", "monkey"};
         game = new GameService(true);
