@@ -27,6 +27,37 @@ public class testForPart1 {
     }
 
     @Test
+    public void testForRow49() {//roll 1 skull, 4 parrots, 3 swords, hold parrots, re-roll swords, get 2 skulls 1 sword  die
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"skull", "parrot", "parrot", "parrot", "parrot", "sword", "sword", "sword"};
+        String input = "2 " + "2,3,4,5 " + "skull,skull,sword ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(0, player.playerRound(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow50() { //roll 2 skulls, 4 parrots, 2 swords, hold parrots, re-roll swords, get 1 skull 1 sword  die
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"skull", "skull", "parrot", "parrot", "parrot", "parrot", "sword", "sword"};
+        String input = "2 " + "3,4,5,6 " + "skull,sword ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(0, player.playerRound(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow51() { //roll 1 skull, 4 parrots, 3 swords, hold parrots, re-roll swords, get 1 skull 2 monkeys re-roll 2 monkeys, get 1 skull 1 monkey and die
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"skull", "parrot", "parrot", "parrot", "parrot", "sword", "sword", "sword"};
+        String input = "2 " + "2,3,4,5 " + "skull,monkey,monkey " + "2 " + "2,3,4,5 " + "skull,monkey ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(0, player.playerRound(card, dieRoll, game));
+    }
+
+
+    @Test
     public void testForRow53() {//score first roll with nothing but 2 diamonds and 2 coins and FC is captain (SC 800)
         fortuneCard = "Captain";
         Card card = new Card(fortuneCard);
