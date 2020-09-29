@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class testForPart1 {
     public final Player player = new Player("Test");
@@ -23,6 +22,14 @@ public class testForPart1 {
         String[] dieRoll = new String[]{"skull", "skull", "skull", "coin", "diamond", "diamond", "diamond", "diamond"};
         game = new GameService(true);
         assertTrue(player.isPlayerTurnDie(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow55() { //score 2 sets of 3 (monkey, swords) in RTS on first roll   (SC 300)
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"monkey", "monkey", "monkey", "sword", "sword", "sword", "parrot", "parrot"};
+        game = new GameService(true);
+        assertEquals(300, player.playerRound(card, dieRoll, game));
     }
 
     @Test

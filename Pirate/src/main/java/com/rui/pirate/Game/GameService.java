@@ -64,7 +64,7 @@ public class GameService implements Serializable {
     }
 
     //1. Can not hold dice with skull. 2.Can not hold dice in the treasureChest. 3. At least left two dice.
-    public Boolean heldDiceValidCheck(ArrayList<Integer> skullDice, ArrayList<Integer> heldDice) { 
+    public Boolean heldDiceValidCheck(ArrayList<Integer> skullDice, ArrayList<Integer> heldDice) {
         for (int s : heldDice) {   //Condition One.
             if (skullDice.contains(s)) { //如果包含了skullDice中的骰子，是非法选取，需要重新选择。
                 System.out.println("Can not hold skull dice, Please choose again");
