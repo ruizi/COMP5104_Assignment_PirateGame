@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Scanner;
 
 import static org.junit.Assert.*;
 
@@ -30,6 +29,24 @@ public class testForPart1 {
         String[] dieRoll = new String[]{"monkey", "monkey", "monkey", "sword", "sword", "sword", "parrot", "parrot"};
         game = new GameService(true);
         assertEquals(300, player.playerRound(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow58() { //score a set of 4 coins correctly (i.e., 200 + 400 points) with FC is a diamond (SC 700)
+        fortuneCard = "Diamond";
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"coin", "coin", "coin", "coin", "monkey", "parrot", "sword", "sword"};
+        game = new GameService(true);
+        assertEquals(700, player.playerRound(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow66() {//score set of 8 coins on first roll and FC is diamond (SC 5400)
+        fortuneCard = "Diamond";
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin"};
+        game = new GameService(true);
+        assertEquals(5400, player.playerRound(card, dieRoll, game));
     }
 
     @Test
