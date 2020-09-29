@@ -1,5 +1,7 @@
 package com.rui.pirate.Game;
 
+import com.rui.pirate.Card.Card;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,5 +88,21 @@ public class GameService implements Serializable {
             System.out.print(i + 1 + "  ");
         }
         System.out.println();
+    }
+
+    /*
+     * print the die roll in a clear way
+     */
+    public void printDieRoll(String[] dieRoll) {
+        System.out.println(" 1_______    2_______    3_______    4_______    5_______    6_______    7_______    8_______  ");
+        System.out.printf("|%8s|  |%8s|  |%8s|  |%8s|  |%8s|  |%8s|  |%8s|  |%8s|  \n", dieRoll[0], dieRoll[1], dieRoll[2], dieRoll[3], dieRoll[4], dieRoll[5], dieRoll[6], dieRoll[7]);
+        System.out.println("|________|  |________|  |________|  |________|  |________|  |________|  |________|  |________|  ");
+
+    }
+
+    public int skullNum(String[] dieRoll, Card card) {
+        ArrayList<Integer> skullDice = this.locateSkull(dieRoll);
+        int skullNum = skullDice.size();
+        return skullNum;
     }
 }

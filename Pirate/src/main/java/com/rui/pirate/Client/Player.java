@@ -2,6 +2,7 @@ package com.rui.pirate.Client;
 
 import com.rui.pirate.Card.Card;
 import com.rui.pirate.Game.GameService;
+import com.rui.pirate.Game.ScoreCalculator;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public class Player implements Serializable {
      *
      */
     private static final long serialVersionUID = 1L;
-    public String name; //玩家名字
+    public String name; //Player`s name
 
     int playerId = 1;
 
@@ -26,6 +27,11 @@ public class Player implements Serializable {
         Arrays.fill(scoreBoard, -1);
     }
 
+    public void setScoreBoardByID(int PlayerID, int score) {
+        int currentScore = this.scoreBoard[PlayerID - 1] + score;
+        this.scoreBoard[PlayerID - 1] = Math.max(currentScore, 0);
+    }
+
     public boolean isPlayerTurnDie(Card card, String[] dieRoll, GameService game) {
         boolean isDie;
         ArrayList<Integer> skullDice = game.locateSkull(dieRoll);
@@ -36,12 +42,24 @@ public class Player implements Serializable {
         } else if (skullNum == 3) {
             System.out.println("Got " + skullNum + " skulls ,you round ends!");
             isDie = true;
-        } else { //骷髅小于3个的情况
+        } else { //is skull num < 3 then isDie equals false.
             isDie = false;
         }
         if (game.isTestMode()) {
             System.out.println("isDie:" + isDie);
         }
         return isDie;
+    }
+
+    public int playerRound(Card card, String[] dieRoll, GameService game) {
+        int roundScore = 0;
+        ScoreCalculator scoreCalculator = new ScoreCalculator(card);
+        System.out.println("First Roll :");
+        game.printDieRoll(dieRoll);
+        roundScore = scoreCalculator.roundScore(dieRoll);
+        setScoreBoardByID(playerId, roundScore);
+        System.out.println("You got " + roundScore + " points this Round.");
+        //game.printPlayerScores(players, scoreBoard);
+        return roundScore;
     }
 }
