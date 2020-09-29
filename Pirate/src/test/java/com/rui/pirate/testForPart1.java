@@ -22,7 +22,11 @@ public class testForPart1 {
     public void testForRow48() {//die with 3 skulls on first roll  -> interface reports death & end of turn
         Card card = new Card(fortuneCard);
         String[] dieRoll = new String[]{"skull", "skull", "skull", "coin", "diamond", "diamond", "diamond", "diamond"};
-        game = new GameService(true);
+        String input = "";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertTrue(player.isPlayerTurnDie(card, dieRoll, game));
+        System.out.println("=====isDie Check====");
         assertTrue(player.isPlayerTurnDie(card, dieRoll, game));
     }
 
@@ -68,15 +72,29 @@ public class testForPart1 {
         fortuneCard = "Captain";
         Card card = new Card(fortuneCard);
         String[] dieRoll = new String[]{"monkey", "monkey", "parrot", "diamond", "diamond", "coin", "coin", "parrot"};
-        game = new GameService(true);
+        String input = "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
         assertEquals(800, player.playerRound(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow54() { //get set of 2 monkeys on first roll, get 3rd monkey on 2nd roll (SC 200 since FC is coin)
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"monkey", "monkey", "parrot", "parrot", "sword", "sword", "parrot", "skull"};
+        String input = "2 " + "1,2 " + "monkey,parrot,sword,sword,skull " + "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(200, player.playerRound(card, dieRoll, game));
     }
 
     @Test
     public void testForRow55() { //score 2 sets of 3 (monkey, swords) in RTS on first roll   (SC 300)
         Card card = new Card(fortuneCard);
         String[] dieRoll = new String[]{"monkey", "monkey", "monkey", "sword", "sword", "sword", "parrot", "parrot"};
-        game = new GameService(true);
+        String input = "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
         assertEquals(300, player.playerRound(card, dieRoll, game));
     }
 
@@ -85,7 +103,9 @@ public class testForPart1 {
         fortuneCard = "Diamond";
         Card card = new Card(fortuneCard);
         String[] dieRoll = new String[]{"coin", "coin", "coin", "coin", "monkey", "parrot", "sword", "sword"};
-        game = new GameService(true);
+        String input = "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
         assertEquals(700, player.playerRound(card, dieRoll, game));
     }
 
@@ -94,7 +114,9 @@ public class testForPart1 {
         fortuneCard = "Diamond";
         Card card = new Card(fortuneCard);
         String[] dieRoll = new String[]{"coin", "coin", "coin", "coin", "coin", "coin", "coin", "coin"};
-        game = new GameService(true);
+        String input = "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
         assertEquals(5400, player.playerRound(card, dieRoll, game));
     }
 
@@ -103,7 +125,9 @@ public class testForPart1 {
         fortuneCard = "Captain";
         Card card = new Card(fortuneCard);
         String[] dieRoll = new String[]{"sword", "sword", "sword", "sword", "sword", "sword", "sword", "sword"};
-        game = new GameService(true);
+        String input = "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
         assertEquals(9000, player.playerRound(card, dieRoll, game));
     }
 
