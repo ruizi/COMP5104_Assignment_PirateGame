@@ -56,10 +56,32 @@ public class Player implements Serializable {
         ScoreCalculator scoreCalculator = new ScoreCalculator(card);
         System.out.println("First Roll :");
         game.printDieRoll(dieRoll);
-        roundScore = scoreCalculator.roundScore(dieRoll);
-        setScoreBoardByID(playerId, roundScore);
-        System.out.println("You got " + roundScore + " points this Round.");
-        //game.printPlayerScores(players, scoreBoard);
+        int turnCount = 1;
+        while (!isPlayerTurnDie(card, dieRoll, game)) { //还活着的情况 1.等于3个骷髅的时候还拥有女巫卡。2.正常情况
+            ArrayList<Integer> skullDice = game.locateSkull(dieRoll);
+            int skullNum = game.skullNum(dieRoll, card);
+
+            int act = game.menuChoice(dieRoll, card, skullDice);
+            if (act == 1) { //直接选择结束，进入记分程序。
+                break;
+            } else if (act == 2) { //正常进行re-roll
+                dieRoll = game.reRollInputAndCheck(skullDice, dieRoll, card); //表示没有treasure chest卡，按正常逻辑处理
+            }
+
+            game.printDieRoll(dieRoll); //游戏继续进行
+            turnCount++;
+        }
+        //分数 结束了正常循环的情况
+        ArrayList<Integer> skullDice = game.locateSkull(dieRoll);
+        int skullNum = game.skullNum(dieRoll, card);
+
+        if (skullNum == 3) {
+            System.out.println("Ops,You got 0 point this Round.");
+        } else {
+            roundScore = scoreCalculator.roundScore(dieRoll);
+            setScoreBoardByID(playerId, roundScore);
+            System.out.println("You got " + roundScore + " points this Round.");
+        }
         return roundScore;
     }
 }

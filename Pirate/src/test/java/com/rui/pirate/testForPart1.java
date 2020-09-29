@@ -34,6 +34,8 @@ public class testForPart1 {
         Scanner scanner = setTestInputScanner(input);
         game = new GameService(true, scanner);
         assertEquals(0, player.playerRound(card, dieRoll, game));
+        System.out.println("=====isDie Check====");
+        assertTrue(player.isPlayerTurnDie(card, dieRoll, game));
     }
 
     @Test
@@ -44,6 +46,8 @@ public class testForPart1 {
         Scanner scanner = setTestInputScanner(input);
         game = new GameService(true, scanner);
         assertEquals(0, player.playerRound(card, dieRoll, game));
+        System.out.println("=====isDie Check====");
+        assertTrue(player.isPlayerTurnDie(card, dieRoll, game));
     }
 
     @Test
@@ -54,6 +58,8 @@ public class testForPart1 {
         Scanner scanner = setTestInputScanner(input);
         game = new GameService(true, scanner);
         assertEquals(0, player.playerRound(card, dieRoll, game));
+        System.out.println("=====isDie Check====");
+        assertTrue(player.isPlayerTurnDie(card, dieRoll, game));
     }
 
 
