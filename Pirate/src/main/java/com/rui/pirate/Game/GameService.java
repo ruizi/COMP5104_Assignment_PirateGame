@@ -63,6 +63,7 @@ public class GameService implements Serializable {
         return skullDice;
     }
 
+
     public void printSkullPosition(ArrayList<Integer> skullDice) {
         //输出当前骷髅的位置
         System.out.print("the skulls are in position :");
