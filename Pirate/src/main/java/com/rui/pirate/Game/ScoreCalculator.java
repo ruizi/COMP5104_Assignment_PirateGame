@@ -2,29 +2,38 @@ package com.rui.pirate.Game;
 
 import com.rui.pirate.Card.Card;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ScoreCalculator {
     Card card;
+    Set<Integer> fullChestSet = new HashSet<>();
 
     public ScoreCalculator(Card card) {
         this.card = card;
     }
 
-    //计算 coin和diamond的 Face Value.
+    //Cal Face Value from coin and diamond.
     public int calFaceValue(String[] dieRoll) {
         int faceValue = 0;
-        for (int i = 0; i < dieRoll.length; i++) { //骰子序列的coin和diamonds的面值
+        for (int i = 0; i < dieRoll.length; i++) { //face valve of die rolls.
             if (dieRoll[i].equals("diamond") || dieRoll[i].equals("coin")) {
                 faceValue += 100;
+                fullChestSet.add(i);
             }
         }
-        if (card.getName().equals("Gold")) { //如果有coin或者diamonds卡牌带来的面值
+        if (card.getName().equals("Gold") || card.getName().equals("Diamond")) { //face value of card.
             faceValue += 100;
         }
         System.out.println("Face Value:" + faceValue);
         return faceValue;
+    }
+
+    public void contributeArrayLoc(String[] dieRoll, String face) {  //label for fullChest cal.
+        for (int i = 0; i < dieRoll.length; i++) {
+            if (dieRoll[i].equals(face)) {
+                fullChestSet.add(i);
+            }
+        }
     }
 
     public int addPointByOneKind(int times) {
@@ -64,7 +73,13 @@ public class ScoreCalculator {
             }
 
         }
-
+        if (card.getName().equals("Diamond")) {
+            if (times.containsKey("diamond")) {
+                times.put("diamond", times.get("diamond") + 1);
+            } else {
+                times.put("diamond", 1);
+            }
+        }
         return times;
     }
 
@@ -77,7 +92,7 @@ public class ScoreCalculator {
             String face = entry.getKey();
             int value = entry.getValue();
             if (value >= 3) {
-
+                contributeArrayLoc(dieRoll, face);
                 bonusPoints += addPointByOneKind(value);
             }
         }
@@ -85,9 +100,22 @@ public class ScoreCalculator {
         return bonusPoints;
     }
 
+    public boolean isFullChest() {
+        return fullChestSet.size() == 8;
+    }
+
+    public int calFullChest() {
+        if (isFullChest()) {
+            System.out.println("FullChest Value :" + 500);
+            return 500;
+        } else {
+            return 0;
+        }
+    }
+
     public int roundScore(String[] dieRoll) { //最后的总分计算。
         System.out.println("======Round Points======");
-        int sumPoints = calFaceValue(dieRoll) + calSequence(dieRoll);
+        int sumPoints = calFaceValue(dieRoll) + calSequence(dieRoll) + calFullChest();
         System.out.printf("======Sum %5d======\n", sumPoints);
         return sumPoints;
     }
