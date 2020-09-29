@@ -63,6 +63,21 @@ public class GameService implements Serializable {
         return skullDice;
     }
 
+    //1. Can not hold dice with skull. 2.Can not hold dice in the treasureChest. 3. At least left two dice.
+    public Boolean heldDiceValidCheck(ArrayList<Integer> skullDice, ArrayList<Integer> heldDice) { 
+        for (int s : heldDice) {   //Condition One.
+            if (skullDice.contains(s)) { //如果包含了skullDice中的骰子，是非法选取，需要重新选择。
+                System.out.println("Can not hold skull dice, Please choose again");
+                return false;
+            }
+        }
+        int frozenDiceNum = heldDice.size() + skullDice.size();
+        if (frozenDiceNum > 6) { //Condition Three.
+            System.out.println("Hold too much, In each roll, you must use at least two dice to start re-roll. Please choose again");
+            return false;
+        }
+        return true;
+    }
 
     public void printSkullPosition(ArrayList<Integer> skullDice) {
         //输出当前骷髅的位置
