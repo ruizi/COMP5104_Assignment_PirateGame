@@ -116,6 +116,10 @@ public class ScoreCalculator {
     public int roundScore(String[] dieRoll) { //最后的总分计算。
         System.out.println("======Round Points======");
         int sumPoints = calFaceValue(dieRoll) + calSequence(dieRoll) + calFullChest();
+        if (card.getName().equals("Captain")) {
+            System.out.println("Captain double: True");
+            sumPoints = sumPoints * 2;
+        }
         System.out.printf("======Sum %5d======\n", sumPoints);
         return sumPoints;
     }

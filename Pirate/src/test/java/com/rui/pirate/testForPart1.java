@@ -31,9 +31,7 @@ public class testForPart1 {
         fortuneCard = "Captain";
         Card card = new Card(fortuneCard);
         String[] dieRoll = new String[]{"monkey", "monkey", "parrot", "diamond", "diamond", "coin", "coin", "parrot"};
-        String input = "1 ";
-        Scanner scanner = setTestInputScanner(input);
-        game = new GameService(true, scanner);
+        game = new GameService(true);
         assertEquals(800, player.playerRound(card, dieRoll, game));
     }
 
@@ -68,9 +66,7 @@ public class testForPart1 {
         fortuneCard = "Captain";
         Card card = new Card(fortuneCard);
         String[] dieRoll = new String[]{"sword", "sword", "sword", "sword", "sword", "sword", "sword", "sword"};
-        String input = "1 ";
-        Scanner scanner = setTestInputScanner(input);
-        game = new GameService(true, scanner);
+        game = new GameService(true);
         assertEquals(9000, player.playerRound(card, dieRoll, game));
     }
 

@@ -5,6 +5,7 @@ public class Card {
 
     public Gold gold;
     public Diamond diamond;
+    public Captain captain;
 
     public String getName() {
         return name;
@@ -20,6 +21,8 @@ public class Card {
             gold = new Gold();
         } else if (name.equals("Diamond")) {
             diamond = new Diamond();
+        } else if (name.equals("Captain")) {
+            captain = new Captain();
         }
     }
 }
