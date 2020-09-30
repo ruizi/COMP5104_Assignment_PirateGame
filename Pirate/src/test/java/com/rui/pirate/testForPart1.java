@@ -295,6 +295,8 @@ public class testForPart1 {
         assertFalse(game.heldDiceValidCheck(skullDice, heldDice));
     }
 
+
+
     public Scanner setTestInputScanner(String input) {
         InputStream in = new ByteArrayInputStream(input.getBytes());//可以通过调用System.setIn（InputStream in）来用自己的流替换System.in。InputStream可以是一个字节数组
         return new Scanner(in);
