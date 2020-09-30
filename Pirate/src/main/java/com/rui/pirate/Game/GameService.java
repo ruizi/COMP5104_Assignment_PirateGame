@@ -1,6 +1,7 @@
 package com.rui.pirate.Game;
 
 import com.rui.pirate.Card.Card;
+import com.rui.pirate.Client.Player;
 
 import java.io.Serializable;
 import java.util.*;
@@ -52,14 +53,63 @@ public class GameService implements Serializable {
         return testMode;
     }
 
-    public ArrayList<Integer> locateSkull(String[] dieRoll) {
-        ArrayList<Integer> skullDice = new ArrayList<>();
-        for (int i = 0; i < dieRoll.length; i++) {
-            if (dieRoll[i].equals("skull")) {
-                skullDice.add(i);
-            }
+    //随机取出一张卡牌
+    public String drawFortuneCard() {
+        int rand = (int) (Math.random() * 35 + 1);
+        if (rand <= 4) {
+            return "Gold"; //Gold Coin * 4
+        } else if (rand <= 8) {
+            return "Diamond"; //Diamonds * 4
+        } else if (rand <= 12) {
+            return "Sorceress"; //Sorceress * 4
+        } else if (rand <= 16) {
+            return "Captain"; //Captain * 4
+        } else if (rand <= 20) {
+            return "Treasure Chest"; //Treasure Chest * 4
+        } else if (rand <= 24) {
+            return "Monkey Business";//Monkey Business * 4
+        } else if (rand <= 27) {
+            return "One Skull"; //One Skull * 3
+        } else if (rand <= 29) {
+            return "Two Skull"; //Two Skull * 2
+        } else if (rand <= 31) {
+            return "Two Sabre"; //Two Sabre * 2
+        } else if (rand <= 33) {
+            return "Three Sabre"; //Three Sabre * 2
+        } else if (rand <= 35) {
+            return "Four Sabre"; //Four Sabre * 2
         }
-        return skullDice;
+        return null;
+    }
+
+    //随机掷骰子
+    public String[] rollDice() {
+        String[] dice = new String[8];
+        for (int i = 0; i < 8; i++) {
+            int rand = (int) (Math.random() * 6 + 1);
+            dice[i] = map.get(rand);
+        }
+        return dice;
+    }
+
+    //游戏主循环输入合法性检查
+    public boolean gameLoopInputCheck(int act, Card card, ArrayList<Integer> skullDice) {
+        if (act == 1) { //任何时候都可以放弃继续，而直接打分
+            return true;
+        } else if (act == 3) { //使用Treasure Chest或这女巫卡前需要先判断是否有这张卡
+            if (card.getName().equals("Treasure Chest") || (card.getName().equals("Sorceress") && !card.sorceress.isUsed())) {
+                return true;
+            } else {
+                System.out.println("You do not have Treasure Chest or Sorceress Card or already used. Please choose 1 for Score or 2 for Continue.");
+            }
+        } else { //选择re-roll需要判断当前是否可以继续 1.Treasure Chest保留的 + Skull封闭的 <=6个，才能给足够的空间进行re-roll,极限情况就是不hold已经6个不能动了。
+            int calFrozenDiceNum = skullDice.size();
+            if (card.getName().equals("Treasure Chest")) {
+                calFrozenDiceNum += card.treasureChest.getTreasureListSize();
+            }
+            return calFrozenDiceNum <= 6;
+        }
+        return false;
     }
 
     //1. Can not hold dice with skull. 2.Can not hold dice in the treasureChest. 3. At least left two dice.
@@ -82,32 +132,101 @@ public class GameService implements Serializable {
         return true;
     }
 
-    public void printSkullPosition(ArrayList<Integer> skullDice) {
-        //输出当前骷髅的位置
-        System.out.print("the skulls are in position :");
-        for (int i : skullDice) {
-            System.out.print(i + 1 + "  ");
+    //在正常round中，输入想要hold的骰子的编号，之后对这些编号进行合法性判断，主要是不能hold骷髅和宝箱内的元素，要剩下至少两个能抛的骰子，宝箱内的元素不能re-roll
+    public String[] reRollInputAndCheck(ArrayList<Integer> skullDice, String[] dieRoll, Card card) {
+        printSkullPosition(skullDice); //打印现在骷髅的位置
+        ArrayList<Integer> treasureChest = new ArrayList<>(); //如果有Treasure Card，需要取出其中保持的骰子与输入的hold做合法性检查
+        //boolean hasTreasureCard = false;
+        if (card.getName().equals("Treasure Chest")) {
+            treasureChest = card.treasureChest.getTreasureList();
+            //hasTreasureCard = true;
         }
-        System.out.println();
+        ArrayList<Integer> heldDice = new ArrayList<>();
+        while (true) {
+            System.out.println("Select the die to hold : ex. 1,2,... Enter 0 for skip ");
+            System.out.println("|| 1. can not hold skull dice or dice in the treasure card. ");
+            System.out.println("|| 2. leave no less than two dice in the ground.");
+            heldDice = selectedDice();//输入准备保留的骰子
+            if (heldDice.contains(-1)) { //如果输入了0，就跳过hold步骤
+                heldDice.clear();
+                break;
+            }
+            if (heldDiceValidCheck(skullDice, heldDice, treasureChest)) { //检查选择是否合法
+                break;
+            }
+        }
+        dieRoll = reRollNotHeld(dieRoll, heldDice, skullDice, treasureChest);
+        //printSkullPosition(locateSkull(dieRoll));
+        return dieRoll;
     }
 
     /*
-     * print the die roll in a clear way
+     * reRoll die which have not been held or frozen
      */
-    public void printDieRoll(String[] dieRoll) {
-        System.out.println(" 1_______    2_______    3_______    4_______    5_______    6_______    7_______    8_______  ");
-        System.out.printf("|%8s|  |%8s|  |%8s|  |%8s|  |%8s|  |%8s|  |%8s|  |%8s|  \n", dieRoll[0], dieRoll[1], dieRoll[2], dieRoll[3], dieRoll[4], dieRoll[5], dieRoll[6], dieRoll[7]);
-        System.out.println("|________|  |________|  |________|  |________|  |________|  |________|  |________|  |________|  ");
+    public String[] reRollNotHeld(String[] dieRoll, ArrayList<Integer> held, ArrayList<Integer> skullDice, ArrayList<Integer> treasureChest) {
+        //held中存的是玩家选择保留的骰子的编号从1开始编码。
+        //初始化一个空间大小为8的List与骰子对应。
+        ArrayList<Integer> rolls = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
+        ArrayList<Integer> heldAndSkullAndTreasure = new ArrayList<>();
+        heldAndSkullAndTreasure.addAll(held);
+        heldAndSkullAndTreasure.addAll(skullDice);
+        heldAndSkullAndTreasure.addAll(treasureChest);
+        //去除因skull或者玩家保留而frozen的骰子
+        for (int i : heldAndSkullAndTreasure) {
+            rolls.remove((Integer) i); //在list中去除需要保留的骰子的编号
+        }
+        //System.out.println("Allowed re-roll dice :" + rolls);
 
+        if (!testMode) { //如果是实际运行模式，就随机生成。
+            // remove the index from the ones to be rolled
+            for (int s : rolls) { //其余号码就是本轮需要投掷的骰子。
+                dieRoll = reRollDice(dieRoll, (s));
+            }
+        } else { //如果是测试模式，按target数组生成。
+            inputTargetArray();
+            for (int i = 0; i < rolls.size(); i++) {
+                dieRoll = reRollDiceForTest(dieRoll, rolls.get(i), target.get(i));
+            }
+        }
+
+        return dieRoll;
     }
 
-    public int skullNum(String[] dieRoll, Card card) {
-        ArrayList<Integer> skullDice = this.locateSkull(dieRoll);
-        int skullNum = skullDice.size();
-        if (card.getName().equals("One Skull") || card.getName().equals("Two Skull")) {
-            skullNum += card.skulls.getSkulls();
+
+    //重置骰子
+    public String[] reRollDice(String[] dieRoll, int i) {
+        int rand = (int) (Math.random() * 6 + 1);
+        dieRoll[i] = map.get(rand);
+        return dieRoll;
+    }
+
+    //重置骰子 rigging 如果target数组中
+    public String[] reRollDiceForTest(String[] dieRoll, int reRollLoc, String targetValue) {
+        while (true) {
+            int rand = (int) (Math.random() * 6 + 1);
+            String face = map.get(rand);
+            if (face.equals(targetValue)) {
+                dieRoll[reRollLoc] = map.get(rand);
+                break;
+            }
         }
-        return skullNum;
+        return dieRoll;
+    }
+
+    //Get input position array
+    public ArrayList<Integer> selectedDice() {
+        Scanner myObj = scanner;
+        String input = myObj.next();
+        String[] selectedDice = (input).replaceAll("\\s", "").split(","); //准备保留的卡牌
+        if (testMode) {
+            System.out.println(input);
+        }
+        ArrayList<Integer> selectedDiceArray = new ArrayList<>();
+        for (String s : selectedDice) {
+            int rem = Integer.parseInt(s) - 1;
+            selectedDiceArray.add(rem);
+        }
+        return selectedDiceArray;
     }
 
     //Get Integer input
@@ -146,122 +265,50 @@ public class GameService implements Serializable {
         return choice;
     }
 
-
-    //游戏主循环输入合法性检查
-    public boolean gameLoopInputCheck(int act, Card card, ArrayList<Integer> skullDice) {
-        if (act == 1) { //任何时候都可以放弃继续，而直接打分
-            return true;
-        } else if (act == 3) { //使用Treasure Chest或这女巫卡前需要先判断是否有这张卡
-            if (card.getName().equals("Treasure Chest") || (card.getName().equals("Sorceress") && !card.sorceress.isUsed())) {
-                return true;
-            } else {
-                System.out.println("You do not have Treasure Chest or Sorceress Card or already used. Please choose 1 for Score or 2 for Continue.");
+    public ArrayList<Integer> locateSkull(String[] dieRoll) {
+        ArrayList<Integer> skullDice = new ArrayList<>();
+        for (int i = 0; i < dieRoll.length; i++) {
+            if (dieRoll[i].equals("skull")) {
+                skullDice.add(i);
             }
-        } else { //选择re-roll需要判断当前是否可以继续 1.Treasure Chest保留的 + Skull封闭的 <=6个，才能给足够的空间进行re-roll,极限情况就是不hold已经6个不能动了。
-            int calFrozenDiceNum = skullDice.size();
-            if (card.getName().equals("Treasure Chest")) {
-                calFrozenDiceNum += card.treasureChest.getTreasureListSize();
-            }
-            return calFrozenDiceNum <= 6;
         }
-        return false;
+        return skullDice;
     }
 
-    //Get input position array
-    public ArrayList<Integer> selectedDice() {
-        Scanner myObj = scanner;
-        String input = myObj.next();
-        String[] selectedDice = (input).replaceAll("\\s", "").split(","); //准备保留的卡牌
-        if (testMode) {
-            System.out.println(input);
+    public int skullNum(String[] dieRoll, Card card) {
+        ArrayList<Integer> skullDice = this.locateSkull(dieRoll);
+        int skullNum = skullDice.size();
+        if (card.getName().equals("One Skull") || card.getName().equals("Two Skull")) {
+            skullNum += card.skulls.getSkulls();
         }
-        ArrayList<Integer> selectedDiceArray = new ArrayList<>();
-        for (String s : selectedDice) {
-            int rem = Integer.parseInt(s) - 1;
-            selectedDiceArray.add(rem);
-        }
-        return selectedDiceArray;
+        return skullNum;
     }
 
-    //在正常round中，输入想要hold的骰子的编号，之后对这些编号进行合法性判断，主要是不能hold骷髅和宝箱内的元素，要剩下至少两个能抛的骰子，宝箱内的元素不能re-roll
-    public String[] reRollInputAndCheck(ArrayList<Integer> skullDice, String[] dieRoll, Card card) {
-        printSkullPosition(skullDice); //打印现在骷髅的位置
-        ArrayList<Integer> treasureChest = new ArrayList<>(); //如果有Treasure Card，需要取出其中保持的骰子与输入的hold做合法性检查
-        //boolean hasTreasureCard = false;
-        if (card.getName().equals("Treasure Chest")) {
-            treasureChest = card.treasureChest.getTreasureList();
-            //hasTreasureCard = true;
+    public void printSkullPosition(ArrayList<Integer> skullDice) {
+        //输出当前骷髅的位置
+        System.out.print("the skulls are in position :");
+        for (int i : skullDice) {
+            System.out.print(i + 1 + "  ");
         }
-        ArrayList<Integer> heldDice = new ArrayList<>();
-        while (true) {
-            System.out.println("Select the die to hold : ex. 1,2,... Enter 0 for skip ");
-            System.out.println("|| 1. can not hold skull dice or dice in the treasure card. ");
-            System.out.println("|| 2. leave no less than two dice in the ground.");
-            heldDice = selectedDice();//输入准备保留的骰子
-            if (heldDice.contains(-1)) { //如果输入了0，就跳过hold步骤
-                heldDice.clear();
-                break;
-            }
-            if (heldDiceValidCheck(skullDice, heldDice, treasureChest)) { //检查选择是否合法
-                break;
-            }
-        }
-        dieRoll = reRollNotHeld(dieRoll, heldDice, skullDice, treasureChest);
-        //printSkullPosition(locateSkull(dieRoll));
-        return dieRoll;
+        System.out.println();
     }
 
+    public void printPlayerScores(Player[] pl, int[] scoreBoard) {
+        // print the score sheets
+        System.out.println("|---------------------------------------------|");
+        for (int i = 0; i < pl.length; i++) {
+            System.out.printf("| Scores for player : %10s | %10d \n", pl[i].name, scoreBoard[i]);
+        }
+        System.out.println("|---------------------------------------------|");
+    }
 
     /*
-     * reRoll die which have not been held or frozen
+     * print the die roll in a clear way
      */
-    public String[] reRollNotHeld(String[] dieRoll, ArrayList<Integer> held, ArrayList<Integer> skullDice, ArrayList<Integer> treasureChest) {
-        //held中存的是玩家选择保留的骰子的编号从1开始编码。
-        //初始化一个空间大小为8的List与骰子对应。
-        ArrayList<Integer> rolls = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
-        ArrayList<Integer> heldAndSkullAndTreasure = new ArrayList<>();
-        heldAndSkullAndTreasure.addAll(held);
-        heldAndSkullAndTreasure.addAll(skullDice);
-        heldAndSkullAndTreasure.addAll(treasureChest);
-        //去除因skull或者玩家保留而frozen的骰子
-        for (int i : heldAndSkullAndTreasure) {
-            rolls.remove((Integer) i); //在list中去除需要保留的骰子的编号
-        }
-        //System.out.println("Allowed re-roll dice :" + rolls);
+    public void printDieRoll(String[] dieRoll) {
+        System.out.println(" 1_______    2_______    3_______    4_______    5_______    6_______    7_______    8_______  ");
+        System.out.printf("|%8s|  |%8s|  |%8s|  |%8s|  |%8s|  |%8s|  |%8s|  |%8s|  \n", dieRoll[0], dieRoll[1], dieRoll[2], dieRoll[3], dieRoll[4], dieRoll[5], dieRoll[6], dieRoll[7]);
+        System.out.println("|________|  |________|  |________|  |________|  |________|  |________|  |________|  |________|  ");
 
-        if (!testMode) { //如果是实际运行模式，就随机生成。
-            // remove the index from the ones to be rolled
-            for (int s : rolls) { //其余号码就是本轮需要投掷的骰子。
-                dieRoll = reRollDice(dieRoll, (s));
-            }
-        } else { //如果是测试模式，按target数组生成。
-            inputTargetArray();
-            for (int i = 0; i < rolls.size(); i++) {
-                dieRoll = reRollDiceForTest(dieRoll, rolls.get(i), target.get(i));
-            }
-        }
-
-        return dieRoll;
     }
-
-    //重置骰子
-    public String[] reRollDice(String[] dieRoll, int i) {
-        int rand = (int) (Math.random() * 6 + 1);
-        dieRoll[i] = map.get(rand);
-        return dieRoll;
-    }
-
-    //重置骰子 rigging 如果target数组中
-    public String[] reRollDiceForTest(String[] dieRoll, int reRollLoc, String targetValue) {
-        while (true) {
-            int rand = (int) (Math.random() * 6 + 1);
-            String face = map.get(rand);
-            if (face.equals(targetValue)) {
-                dieRoll[reRollLoc] = map.get(rand);
-                break;
-            }
-        }
-        return dieRoll;
-    }
-
 }

@@ -8,6 +8,7 @@ import com.rui.pirate.Game.theIslandOfSkulls;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class Player implements Serializable {
 
@@ -20,12 +21,19 @@ public class Player implements Serializable {
     int playerId = 1;
 
     private int[] scoreBoard = new int[3];
+    static Connection clientConnection;
+    Player[] players = new Player[3];
 
     //constructor for Player
     public Player(String n) {
         name = n; //set the input string as the player`s name.
         //init a scoreSheet for this player with all blanks equals -1
         Arrays.fill(scoreBoard, -1);
+    }
+
+    //get the local player object
+    public Player getPlayer() {
+        return this;
     }
 
     public int getScoreBoardByID(int PlayerID) {
@@ -51,6 +59,21 @@ public class Player implements Serializable {
             }
         }
     }
+
+    //init the round players in the local terminal.
+    public void initializePlayers() {
+        for (int i = 0; i < 3; i++) {
+            players[i] = new Player(" ");
+        }
+    }
+
+    public void connectToClient() {
+        clientConnection = new Connection();
+        playerId = clientConnection.getConnectionID();
+        System.out.println("Connected as No. " + playerId + " player.");
+        clientConnection.sendPlayer(getPlayer());
+    }
+
 
     public boolean isPlayerTurnDie(Card card, String[] dieRoll, GameService game) {
         boolean isDie;
@@ -161,5 +184,65 @@ public class Player implements Serializable {
         }
         //game.printPlayerScores(players, scoreBoard);
         return roundScore;
+    }
+
+    public void startGame(GameService game) {
+        // receive players once for names
+        players = clientConnection.receivePlayer();
+        while (true) {
+            int round = clientConnection.receiveRoundNo();//接收服务器传递过来的当前投掷轮数
+            if (round == -1) //作为最后的退出
+                break;
+            System.out.println("\n \n \n ********Round Number " + round + "********");
+            scoreBoard = clientConnection.receiveScoreBoard();//同步各玩家的分数
+            game.printPlayerScores(players, scoreBoard); //打印当前各玩家分数
+
+            //1. draw one fortune card.
+            String fortuneCard = game.drawFortuneCard();
+            System.out.println(fortuneCard);
+            Card card = new Card(fortuneCard);
+            System.out.println("| CARD ===> " + card.getName());
+
+            //2. roll the overall eight dice at the beginning
+            String[] dieRoll = game.rollDice(); //投掷骰子
+
+            int roundScore = playerRound(card, dieRoll, game);
+            System.out.println("This Round you got:" + roundScore + "points");
+            game.printPlayerScores(players, scoreBoard); //打印当前各玩家分数
+            clientConnection.sendScores(scoreBoard);//把得分发送出去
+        }
+    }
+
+    //接收服务器的结束信号，输出winner
+    public void showTheWinner(GameService game) {
+        scoreBoard = clientConnection.receiveScoreBoard();//同步各玩家的分数
+        System.out.println("The Final Score Board：");
+        game.printPlayerScores(players, scoreBoard); //打印当前各玩家分数
+        int winnerID = clientConnection.receiveWinnerID() + 1;//接收服务器传递过来的赢家ID号
+        if (playerId == winnerID) {
+            System.out.println("You win!");
+        } else {
+            System.out.println("The winner is " + players[winnerID - 1].name);
+        }
+        System.out.println("Game over!");
+    }
+
+
+    public static void main(String[] args) {
+        //获取用户名字输入
+        Scanner myObj = new Scanner(System.in);
+        System.out.print("What is your name ? ");
+        String name = myObj.next();
+
+        //构造玩家对象，设置姓名与初始化得分。
+        Player p = new Player(name);
+        //本地初始化三个玩家
+        p.initializePlayers();
+        //连接客户端
+        p.connectToClient();
+        GameService game = new GameService(); //初始化构造一个游戏局
+        p.startGame(game);
+        p.showTheWinner(game);
+        myObj.close();
     }
 }

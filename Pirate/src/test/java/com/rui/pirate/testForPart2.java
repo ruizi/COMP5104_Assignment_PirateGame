@@ -3,6 +3,7 @@ package com.rui.pirate;
 import com.rui.pirate.Card.Card;
 import com.rui.pirate.Client.Player;
 import com.rui.pirate.Game.GameService;
+import com.rui.pirate.Server.GameServer;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
