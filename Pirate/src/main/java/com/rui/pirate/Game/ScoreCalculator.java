@@ -96,6 +96,9 @@ public class ScoreCalculator {
 
     //x of a kind , Sequence.
     public int calSequence(String[] dieRoll) {
+        if (card.getName().equals("Monkey Business")) { //有猴子卡
+            dieRoll = card.monkeyBusiness.parrotToMonkey(dieRoll);
+        }
         int bonusPoints = 0;
         //统计各元素出现次数
         HashMap<String, Integer> times = timesCal(dieRoll);

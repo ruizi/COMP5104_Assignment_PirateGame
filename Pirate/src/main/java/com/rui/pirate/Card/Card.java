@@ -10,6 +10,7 @@ public class Card {
     public Captain captain;
     public TreasureChest treasureChest;
     public Sorceress sorceress;
+    public MonkeyBusiness monkeyBusiness;
 
     public String getName() {
         return name;
@@ -31,6 +32,8 @@ public class Card {
             treasureChest = new TreasureChest(new ArrayList<Integer>());
         } else if (name.equals("Sorceress")) { //OK
             sorceress = new Sorceress();
+        } else if (name.equals("Monkey Business")) {
+            monkeyBusiness = new MonkeyBusiness();
         }
     }
 }
