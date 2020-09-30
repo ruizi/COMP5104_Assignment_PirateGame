@@ -39,10 +39,15 @@ public class Player implements Serializable {
         int skullNum = skullDice.size();
         if (skullNum >= 4) {
             isDie = true;
-        } else if (skullNum == 3) {
-            System.out.println("Got " + skullNum + " skulls ,you round ends!");
-            isDie = true;
-        } else { //is skull num < 3 then isDie equals false.
+        } else if (skullNum == 3) { //骷髅累计等于3个的情况
+            //first, check the player if he/she has a Sorceress card which can bring back to life one skull
+            if (card.getName().equals("Sorceress") && !card.sorceress.isUsed()) { //拥有女巫卡且未使用
+                isDie = false;
+            } else {//没有女巫卡或者已经使用
+                System.out.println("Got " + skullNum + " skulls ,you round ends!");
+                isDie = true;
+            }
+        } else { //骷髅小于3个的情况
             isDie = false;
         }
         if (game.isTestMode()) {
@@ -60,25 +65,29 @@ public class Player implements Serializable {
         while (!isPlayerTurnDie(card, dieRoll, game)) { //还活着的情况 1.等于3个骷髅的时候还拥有女巫卡。2.正常情况
             ArrayList<Integer> skullDice = game.locateSkull(dieRoll);
             int skullNum = game.skullNum(dieRoll, card);
-
-            int act = game.menuChoice(dieRoll, card, skullDice);
-            if (act == 1) { //直接选择结束，进入记分程序。
-                break;
-            } else if (act == 2) { //正常进行re-roll
-                dieRoll = game.reRollInputAndCheck(skullDice, dieRoll, card); //表示没有treasure chest卡，按正常逻辑处理
-            } else { //选择进行Treasure Chest操作 或者女巫卡
-
-                card.treasureChest.treasureChestOperation(skullDice, dieRoll, game);
-                dieRoll = game.reRollInputAndCheck(skullDice, dieRoll, card); //使用treasure chest卡后re-roll.
+            if (skullNum == 3 && card.getName().equals("Sorceress") && !card.sorceress.isUsed()) {//拥有女巫卡且未使用
+                dieRoll = card.sorceress.sorceressCard(skullDice, dieRoll, game);//新一轮的投掷情况
+            } else { //正常情况下，skull的个数小于3个
+                int act = game.menuChoice(dieRoll, card, skullDice);
+                if (act == 1) { //直接选择结束，进入记分程序。
+                    break;
+                } else if (act == 2) { //正常进行re-roll
+                    dieRoll = game.reRollInputAndCheck(skullDice, dieRoll, card); //表示没有treasure chest卡，按正常逻辑处理
+                } else { //选择进行Treasure Chest操作 或者女巫卡
+                    if (card.getName().equals("Sorceress") && !card.sorceress.isUsed()) {
+                        dieRoll = card.sorceress.sorceressCard(skullDice, dieRoll, game);//新一轮的投掷情况
+                    } else { //Treasure Chest操作
+                        card.treasureChest.treasureChestOperation(skullDice, dieRoll, game);
+                        dieRoll = game.reRollInputAndCheck(skullDice, dieRoll, card); //使用treasure chest卡后re-roll.
+                    }
+                }
             }
-
             game.printDieRoll(dieRoll); //游戏继续进行
             turnCount++;
         }
         //分数 结束了正常循环的情况
         ArrayList<Integer> skullDice = game.locateSkull(dieRoll);
         int skullNum = game.skullNum(dieRoll, card);
-
 
         if (skullNum >= 4) { //大于4个骷髅情况： 1.先考虑是不是第一轮进入了骷髅岛.
             if (turnCount == 1) {

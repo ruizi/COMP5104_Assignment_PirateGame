@@ -9,6 +9,7 @@ public class Card {
     public Diamond diamond;
     public Captain captain;
     public TreasureChest treasureChest;
+    public Sorceress sorceress;
 
     public String getName() {
         return name;
@@ -28,6 +29,8 @@ public class Card {
             captain = new Captain();
         } else if (name.equals("Treasure Chest")) {
             treasureChest = new TreasureChest(new ArrayList<Integer>());
+        } else if (name.equals("Sorceress")) { //OK
+            sorceress = new Sorceress();
         }
     }
 }
