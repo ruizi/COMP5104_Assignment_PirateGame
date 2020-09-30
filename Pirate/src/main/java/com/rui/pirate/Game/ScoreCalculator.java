@@ -39,6 +39,27 @@ public class ScoreCalculator {
         return faceValue;
     }
 
+    //海战卡
+    public int calSeaBattle(String[] dieRoll) {
+        int seaBattleValue = 0;
+        int swordNum = 0;
+        if (card.getName().equals("Two Sabre") || card.getName().equals("Three Sabre") || card.getName().equals("Four Sabre")) {
+            ArrayList<Integer> swordLocList = new ArrayList<>();
+            for (int i = 0; i < dieRoll.length; i++) {
+                if (dieRoll[i].equals("sword")) {
+                    swordNum += 1;
+                    swordLocList.add(i);
+                }
+            }
+            seaBattleValue = card.seaBattle.seaBattlePoint(swordNum);
+            if (seaBattleValue > 0) {
+                fullChestSet.addAll(swordLocList);
+            }
+        }
+        System.out.println("Sea Battle Value :" + seaBattleValue);
+        return seaBattleValue;//返回奖励或惩罚分数
+    }
+
     public void contributeArrayLoc(String[] dieRoll, String face) {  //label for fullChest cal.
         for (int i = 0; i < dieRoll.length; i++) {
             if (dieRoll[i].equals(face)) {
@@ -149,7 +170,7 @@ public class ScoreCalculator {
 
     public int roundScore(String[] dieRoll) { //最后的总分计算。
         System.out.println("======Round Points======");
-        int sumPoints = calFaceValue(dieRoll) + calSequence(dieRoll) + calFullChest();
+        int sumPoints = calFaceValue(dieRoll) + calSequence(dieRoll) + calSeaBattle(dieRoll) + calFullChest();
         if (card.getName().equals("Captain")) {
             System.out.println("Captain double: True");
             sumPoints = sumPoints * 2;

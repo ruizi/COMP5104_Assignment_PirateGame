@@ -12,6 +12,7 @@ public class Card {
     public Sorceress sorceress;
     public MonkeyBusiness monkeyBusiness;
     public Skulls skulls;
+    public SeaBattle seaBattle;
 
     public String getName() {
         return name;
@@ -39,6 +40,12 @@ public class Card {
             skulls = new Skulls(1);
         } else if (name.equals("Two Skull")) {
             skulls = new Skulls(2);
+        } else if (name.equals("Two Sabre")) {
+            seaBattle = new SeaBattle(2, 300);
+        } else if (name.equals("Three Sabre")) {
+            seaBattle = new SeaBattle(3, 500);
+        } else if (name.equals("Four Sabre")) {
+            seaBattle = new SeaBattle(4, 1000);
         }
     }
 }

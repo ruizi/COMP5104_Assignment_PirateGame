@@ -82,6 +82,7 @@ public class Player implements Serializable {
         System.out.println("First Roll :");
         game.printDieRoll(dieRoll);
         int turnCount = 1;
+
         while (!isPlayerTurnDie(card, dieRoll, game)) { //还活着的情况 1.等于3个骷髅的时候还拥有女巫卡。2.正常情况
             ArrayList<Integer> skullDice = game.locateSkull(dieRoll);
             int skullNum = game.skullNum(dieRoll, card);
@@ -110,34 +111,55 @@ public class Player implements Serializable {
         int skullNum = game.skullNum(dieRoll, card);
 
         if (skullNum >= 4) { //大于4个骷髅情况： 1.先考虑是不是第一轮进入了骷髅岛.
-            if (turnCount == 1) {
-                //没有海战卡，启动骷髅岛
-                System.out.println("You got " + skullNum + " skulls in your first roll. So Welcome to the Island of Skulls!");
-                theIslandOfSkulls islandOfSkulls = new theIslandOfSkulls(card, scoreBoard, playerId);//启动骷髅岛模式，初始化模式各参数
-                roundScore = islandOfSkulls.theGameLoop(skullDice, dieRoll, game);//游戏循环结束返回更新的记分版。
-                System.out.println(roundScore);
-                setScoreBoardForSkullIslands(playerId, roundScore);//修改记分牌
-
-            } else { //如果不是第一轮，那检查是否有treasure chest卡，有的话计算保留分数，没有得话看是否有海战卡，有海战卡要丢分，没有得0分。
+            if (turnCount == 1) { //第一轮出现4个骷髅且持有海战卡，结束本轮，未实现海战。
+                if (card.getName().equals("Two Sabre") || card.getName().equals("Three Sabre") || card.getName().equals("Four Sabre")) {
+                    roundScore = card.seaBattle.seaBattleFailed(); //海战卡扣分
+                    setScoreBoardByID(playerId, roundScore); //修改记分牌
+                    System.out.println("Got " + skullNum + " skulls in the first turn while hold Sea Battle Card ,you round ends! Lose:" + roundScore + " points");
+                } else { //没有海战卡，启动骷髅岛
+                    System.out.println("You got " + skullNum + " skulls in your first roll. So Welcome to the Island of Skulls!");
+                    theIslandOfSkulls islandOfSkulls = new theIslandOfSkulls(card, scoreBoard, playerId);//启动骷髅岛模式，初始化模式各参数
+                    roundScore = islandOfSkulls.theGameLoop(skullDice, dieRoll, game);//游戏循环结束返回更新的记分版。
+                    System.out.println(roundScore);
+                    setScoreBoardForSkullIslands(playerId, roundScore);//修改记分牌
+                }
+            } else { //2.如果不是第一轮，那检查是否有treasure chest卡，有的话计算保留分数，没有得话看是否有海战卡，有海战卡要丢分，没有得0分。
                 if (card.getName().equals("Treasure Chest")) {//检查是treasure card保留分数。
                     roundScore = scoreCalculator.onlyTreasureChest(dieRoll);
                     setScoreBoardByID(playerId, roundScore);
                     System.out.println("You got " + roundScore + " points from treasure chest this round.");
+                } else {
+                    //无treasure card。检查是否有海战卡 ，有海战卡需要扣分，没有海战卡就得0分。
+                    if (card.getName().equals("Two Sabre") || card.getName().equals("Three Sabre") || card.getName().equals("Four Sabre")) {
+                        System.out.println("Got " + skullNum + " skulls in this roll while hold Sea Battle Card ,you round ends!");
+                        roundScore = card.seaBattle.seaBattleFailed();
+                        setScoreBoardByID(playerId, roundScore); //修改记分牌
+                    } else { //没有海战卡，得0分。
+                        System.out.println("Ops,You got 0 point this Round.");
+                    }
                 }
             }
-        } else if (skullNum == 3) {
-            if (card.getName().equals("Treasure Chest")) {//检查是treasure card保留分数。 todo 删了treasure卡 finished
+        } else if (skullNum == 3) { //3个骷髅，没有女巫卡或者已经使用。1.没有女巫卡,treasure card或者sea battle card 2.有女巫卡但已经使用了，就直接得0分。
+            if (card.getName().equals("Treasure Chest")) {//检查是treasure card保留分数。
                 roundScore = scoreCalculator.onlyTreasureChest(dieRoll);
                 setScoreBoardByID(playerId, roundScore);
                 System.out.println("You got " + roundScore + " points this Round.");
             } else {
-                System.out.println("Ops,You got 0 point this Round.");
+                //无treasure card。检查是否有海战卡 ，有海战卡需要扣分，没有海战卡就得0分。
+                if (card.getName().equals("Two Sabre") || card.getName().equals("Three Sabre") || card.getName().equals("Four Sabre")) {
+                    roundScore = card.seaBattle.seaBattleFailed();
+                    System.out.println("Sea battle failed, lose " + roundScore + " Points.");
+                    setScoreBoardByID(playerId, roundScore); //修改记分牌
+                } else { //没有海战卡，或者女巫卡已经使用。不扣分，得0分。
+                    System.out.println("Ops,You got 0 point this Round.");
+                }
             }
-        } else {
+        } else { //正常情况下，主动结束游戏轮，记分。int addScore
             roundScore = scoreCalculator.roundScore(dieRoll);
             setScoreBoardByID(playerId, roundScore);
             System.out.println("You got " + roundScore + " points this Round.");
         }
+        //game.printPlayerScores(players, scoreBoard);
         return roundScore;
     }
 }
