@@ -3,6 +3,7 @@ package com.rui.pirate.Client;
 import com.rui.pirate.Card.Card;
 import com.rui.pirate.Game.GameService;
 import com.rui.pirate.Game.ScoreCalculator;
+import com.rui.pirate.Game.theIslandOfSkulls;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,9 +28,28 @@ public class Player implements Serializable {
         Arrays.fill(scoreBoard, -1);
     }
 
+    public int getScoreBoardByID(int PlayerID) {
+        return this.scoreBoard[PlayerID - 1];
+    }
+
+    public void setScoreBoardForTest(int score) {
+        for (int i = 0; i < scoreBoard.length; i++) {
+            this.scoreBoard[i] = score;
+        }
+    }
+
     public void setScoreBoardByID(int PlayerID, int score) {
         int currentScore = this.scoreBoard[PlayerID - 1] + score;
         this.scoreBoard[PlayerID - 1] = Math.max(currentScore, 0);
+    }
+
+    public void setScoreBoardForSkullIslands(int PlayerID, int score) { //PlayID是从1开始的。 分数不够扣不能是负数，最小为0。
+        for (int i = 0; i < 3; i++) {
+            if (i != (PlayerID - 1)) { //除去自己以外的其他玩家扣分,先检查是否够扣，不够的话设置为0分。传递的是负分
+                int currentPoints = scoreBoard[i] + score;
+                scoreBoard[i] = Math.max(currentPoints, 0);
+            }
+        }
     }
 
     public boolean isPlayerTurnDie(Card card, String[] dieRoll, GameService game) {
@@ -91,7 +111,13 @@ public class Player implements Serializable {
 
         if (skullNum >= 4) { //大于4个骷髅情况： 1.先考虑是不是第一轮进入了骷髅岛.
             if (turnCount == 1) {
-                ;
+                //没有海战卡，启动骷髅岛
+                System.out.println("You got " + skullNum + " skulls in your first roll. So Welcome to the Island of Skulls!");
+                theIslandOfSkulls islandOfSkulls = new theIslandOfSkulls(card, scoreBoard, playerId);//启动骷髅岛模式，初始化模式各参数
+                roundScore = islandOfSkulls.theGameLoop(skullDice, dieRoll, game);//游戏循环结束返回更新的记分版。
+                System.out.println(roundScore);
+                setScoreBoardForSkullIslands(playerId, roundScore);//修改记分牌
+
             } else { //如果不是第一轮，那检查是否有treasure chest卡，有的话计算保留分数，没有得话看是否有海战卡，有海战卡要丢分，没有得0分。
                 if (card.getName().equals("Treasure Chest")) {//检查是treasure card保留分数。
                     roundScore = scoreCalculator.onlyTreasureChest(dieRoll);
