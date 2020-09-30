@@ -11,6 +11,7 @@ public class Card {
     public TreasureChest treasureChest;
     public Sorceress sorceress;
     public MonkeyBusiness monkeyBusiness;
+    public Skulls skulls;
 
     public String getName() {
         return name;
@@ -34,6 +35,10 @@ public class Card {
             sorceress = new Sorceress();
         } else if (name.equals("Monkey Business")) {
             monkeyBusiness = new MonkeyBusiness();
+        } else if (name.equals("One Skull")) {
+            skulls = new Skulls(1);
+        } else if (name.equals("Two Skull")) {
+            skulls = new Skulls(2);
         }
     }
 }

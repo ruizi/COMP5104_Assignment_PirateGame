@@ -104,6 +104,9 @@ public class GameService implements Serializable {
     public int skullNum(String[] dieRoll, Card card) {
         ArrayList<Integer> skullDice = this.locateSkull(dieRoll);
         int skullNum = skullDice.size();
+        if (card.getName().equals("One Skull") || card.getName().equals("Two Skull")) {
+            skullNum += card.skulls.getSkulls();
+        }
         return skullNum;
     }
 

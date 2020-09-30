@@ -36,7 +36,7 @@ public class Player implements Serializable {
         boolean isDie;
         ArrayList<Integer> skullDice = game.locateSkull(dieRoll);
         game.printSkullPosition(skullDice);
-        int skullNum = skullDice.size();
+        int skullNum = game.skullNum(dieRoll, card);
         if (skullNum >= 4) {
             isDie = true;
         } else if (skullNum == 3) { //骷髅累计等于3个的情况
