@@ -401,6 +401,94 @@ public class testForPart2 {
         assertEquals(2300, player.getScoreBoardByID(1));
     }
 
+    @Test
+    public void testForRow40() {
+        fortuneCard = "Captain";
+        Card card = new Card(fortuneCard);
+        player.setScoreBoardForTest(5500);
+        Player one = new Player("One");
+        Player two = new Player("Two");
+        Player three = new Player("Three");
+
+        String[] dieRoll3 = new String[]{"sword", "sword", "sword", "sword", "sword", "sword", "sword", "sword"};
+        String[] dieRoll2 = new String[]{"sword", "sword", "sword", "parrot", "parrot", "monkey", "monkey", "skull"};
+        String[] dieRoll1 = new String[]{"sword", "sword", "sword", "parrot", "parrot", "skull", "skull", "skull"};
+
+
+        String inputForOne = "1 ";
+        Scanner scanner = setTestInputScanner(inputForOne);
+        game = new GameService(true, scanner);
+        int scoreOne = one.playerRound(card, dieRoll1, game);
+
+        String inputForTwo = "1 ";
+        scanner = setTestInputScanner(inputForTwo);
+        game = new GameService(true, scanner);
+        int scoreTwo = two.playerRound(card, dieRoll2, game);
+
+        String inputForThree = "1 ";
+        scanner = setTestInputScanner(inputForThree);
+        game = new GameService(true, scanner);
+        int scoreThree = three.playerRound(card, dieRoll3, game);
+
+        GameServer gameServer = new GameServer();
+        gameServer.setPlayers(new Player[]{one, three, three});
+        gameServer.updateScoreBoardByID(1, scoreOne);
+        gameServer.updateScoreBoardByID(2, scoreTwo);
+        gameServer.updateScoreBoardByID(3, scoreThree);
+        assertTrue(gameServer.isEnd());
+        gameServer.printPlayerScores();
+        assertEquals(3, gameServer.getWinner() + 1);
+    }
+
+    @Test
+    public void testForRow43() {
+        Card card = new Card(fortuneCard);
+        player.setScoreBoardForTest(0);
+        Player one = new Player("One");
+        Player two = new Player("Two");
+        Player three = new Player("Three");
+
+        String[] dieRoll1 = new String[]{"sword", "sword", "sword", "parrot", "parrot", "parrot", "coin", "skull"};
+        String[] dieRoll2 = new String[]{"sword", "sword", "sword", "coin", "coin", "coin", "coin", "coin"};
+        String[] dieRoll3 = new String[]{"sword", "sword", "sword", "sword", "parrot", "parrot", "skull", "skull"};
+
+        String inputForOne = "1 " + "1 ";
+        Scanner scanner = setTestInputScanner(inputForOne);
+        game = new GameService(true, scanner);
+        int scoreOneRound1 = one.playerRound(card, dieRoll1, game);
+        int scoreOneRound2 = one.playerRound(card, dieRoll1, game);
+        System.out.println("=============================");
+        System.out.println("Player One finished. Got " + scoreOneRound1 + " in first round." + " Got " + scoreOneRound2 + " in the second round.");
+        System.out.println("=============================");
+
+        String inputForTwo = "1 " + "2 " + "1,2,3 " + "sword,sword,sword,sword,sword " + "1 ";
+        scanner = setTestInputScanner(inputForTwo);
+        game = new GameService(true, scanner);
+        int scoreTwoRound1 = two.playerRound(card, dieRoll2, game);
+        int scoreTwoRound2 = one.playerRound(card, dieRoll2, game);
+        System.out.println("=============================");
+        System.out.println("Player Two finished. Got " + scoreTwoRound1 + " in first round." + " Got " + scoreTwoRound2 + " in the second round.");
+        System.out.println("=============================");
+
+        String inputForThree = "1 " + "1 ";
+        scanner = setTestInputScanner(inputForThree);
+        game = new GameService(true, scanner);
+        int scoreThreeRound1 = three.playerRound(card, dieRoll3, game);
+        int scoreThreeRound2 = three.playerRound(card, dieRoll3, game);
+        System.out.println("=============================");
+        System.out.println("Player Three finished. Got " + scoreThreeRound1 + " in first round." + " Got " + scoreThreeRound2 + " in the second round.");
+        System.out.println("=============================");
+
+        GameServer gameServer = new GameServer();
+        gameServer.setPlayers(new Player[]{one, two, three});
+        gameServer.updateScoreBoardByID(1, scoreOneRound1 + scoreOneRound2);
+        gameServer.updateScoreBoardByID(2, scoreTwoRound1 + scoreTwoRound2);
+        gameServer.updateScoreBoardByID(3, scoreThreeRound1 + scoreThreeRound2);
+        assertTrue(gameServer.isEnd());
+        gameServer.printPlayerScores();
+        assertEquals(2, gameServer.getWinner() + 1);
+    }
+
     public Scanner setTestInputScanner(String input) {
         InputStream in = new ByteArrayInputStream(input.getBytes());//可以通过调用System.setIn（InputStream in）来用自己的流替换System.in。InputStream可以是一个字节数组
         return new Scanner(in);
