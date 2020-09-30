@@ -32,6 +32,8 @@ public class testForPart2 {
         card.sorceress.sorceressCard(skullDice, dieRoll, game);
         assertTrue(card.sorceress.isUsed());
         assertEquals(1, skullDice.size());
+        System.out.println("=====isDie Check====");
+        assertFalse(player.isPlayerTurnDie(card, dieRoll, game));
     }
 
     @Test
@@ -62,6 +64,41 @@ public class testForPart2 {
         skullDice = game.locateSkull(dieRoll);
         game.printDieRoll(dieRoll);
         assertEquals(0, skullDice.size());
+        System.out.println("=====isDie Check====");
+        assertFalse(player.isPlayerTurnDie(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow85() {//first roll gets 3 monkeys 3 parrots  1 skull 1 coin  SC = 1100  (i.e., sequence of of 6 + coin)
+        fortuneCard = "Monkey Business";
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"monkey", "monkey", "monkey", "parrot", "parrot", "parrot", "skull", "coin"};
+        String input = "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(1100, player.playerRound(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow86() {//over several rolls: 2 monkeys, 1 parrot, 2 coins, 1 diamond, 2 swords         SC 400
+        fortuneCard = "Monkey Business";
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"monkey", "monkey", "sword", "parrot", "parrot", "parrot", "coin", "coin"};
+        String input = "2 " + "1,2,7,8 " + "sword,sword,parrot,parrot " + "2 " + "1,2,3,4,7,8 " + "parrot,diamond " + "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(400, player.playerRound(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow87() {//over several rolls get 3 monkeys, 4 parrots, 1 sword    SC 2000 (ie seq of 7)
+        fortuneCard = "Monkey Business";
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"monkey", "monkey", "sword", "parrot", "parrot", "parrot", "coin", "coin"};
+        String input = "2 " + "1,2,7,8 " + "monkey,parrot,parrot,parrot " + "2 " + "1,2,3,4,5,6 " + "parrot,sword " + "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(2000, player.playerRound(card, dieRoll, game));
     }
 
     @Test
