@@ -130,6 +130,47 @@ public class testForPart2 {
         assertTrue(player.isPlayerTurnDie(card, dieRoll, game));
     }
 
+    @Test
+    public void testForRow101() {//3 monkeys, 3 swords, 1 diamond, 1 parrot FC: coin   => SC 400  (ie no bonus)
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"monkey", "monkey", "monkey", "sword", "sword", "sword", "diamond", "parrot"};
+        String input = "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(400, player.playerRound(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow102() {//3 monkeys, 3 swords, 2 coins FC: captain   => SC (100+100+200+500)*2 =  1800
+        fortuneCard = "Captain";
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"monkey", "monkey", "monkey", "sword", "sword", "sword", "coin", "coin"};
+        String input = "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(1800, player.playerRound(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow103() {//3 monkeys, 4 swords, 1 diamond, 1 coin FC: coin   => SC 1100  (ie 600+bonus)
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"monkey", "monkey", "monkey", "sword", "sword", "sword", "sword", "diamond"};
+        String input = "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(1000, player.playerRound(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow107() {//FC: monkey business and RTS: 2 monkeys, 1 parrot, 2 coins, 3 diamonds   SC 1200 (bonus)
+        fortuneCard = "Monkey Business";
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"monkey", "monkey", "parrot", "coin", "coin", "diamond", "diamond", "diamond"};
+        String input = "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(1200, player.playerRound(card, dieRoll, game));
+    }
 
     public Scanner setTestInputScanner(String input) {
         InputStream in = new ByteArrayInputStream(input.getBytes());//可以通过调用System.setIn（InputStream in）来用自己的流替换System.in。InputStream可以是一个字节数组
