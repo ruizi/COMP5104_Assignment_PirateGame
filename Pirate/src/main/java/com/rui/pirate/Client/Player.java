@@ -66,6 +66,10 @@ public class Player implements Serializable {
                 break;
             } else if (act == 2) { //正常进行re-roll
                 dieRoll = game.reRollInputAndCheck(skullDice, dieRoll, card); //表示没有treasure chest卡，按正常逻辑处理
+            } else { //选择进行Treasure Chest操作 或者女巫卡
+
+                card.treasureChest.treasureChestOperation(skullDice, dieRoll, game);
+                dieRoll = game.reRollInputAndCheck(skullDice, dieRoll, card); //使用treasure chest卡后re-roll.
             }
 
             game.printDieRoll(dieRoll); //游戏继续进行
@@ -75,8 +79,25 @@ public class Player implements Serializable {
         ArrayList<Integer> skullDice = game.locateSkull(dieRoll);
         int skullNum = game.skullNum(dieRoll, card);
 
-        if (skullNum == 3) {
-            System.out.println("Ops,You got 0 point this Round.");
+
+        if (skullNum >= 4) { //大于4个骷髅情况： 1.先考虑是不是第一轮进入了骷髅岛.
+            if (turnCount == 1) {
+                ;
+            } else { //如果不是第一轮，那检查是否有treasure chest卡，有的话计算保留分数，没有得话看是否有海战卡，有海战卡要丢分，没有得0分。
+                if (card.getName().equals("Treasure Chest")) {//检查是treasure card保留分数。
+                    roundScore = scoreCalculator.onlyTreasureChest(dieRoll);
+                    setScoreBoardByID(playerId, roundScore);
+                    System.out.println("You got " + roundScore + " points from treasure chest this round.");
+                }
+            }
+        } else if (skullNum == 3) {
+            if (card.getName().equals("Treasure Chest")) {//检查是treasure card保留分数。 todo 删了treasure卡 finished
+                roundScore = scoreCalculator.onlyTreasureChest(dieRoll);
+                setScoreBoardByID(playerId, roundScore);
+                System.out.println("You got " + roundScore + " points this Round.");
+            } else {
+                System.out.println("Ops,You got 0 point this Round.");
+            }
         } else {
             roundScore = scoreCalculator.roundScore(dieRoll);
             setScoreBoardByID(playerId, roundScore);

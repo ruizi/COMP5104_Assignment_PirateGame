@@ -292,9 +292,9 @@ public class testForPart1 {
         game = new GameService(true);
         ArrayList<Integer> skullDice = game.locateSkull(dieRoll);
         ArrayList<Integer> heldDice = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7));
-        assertFalse(game.heldDiceValidCheck(skullDice, heldDice));
+        ArrayList<Integer> treasureChest = new ArrayList<>();
+        assertFalse(game.heldDiceValidCheck(skullDice, heldDice, treasureChest));
     }
-
 
 
     public Scanner setTestInputScanner(String input) {

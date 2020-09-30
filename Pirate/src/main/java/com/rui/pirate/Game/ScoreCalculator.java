@@ -28,6 +28,17 @@ public class ScoreCalculator {
         return faceValue;
     }
 
+    public int calFaceValueFromTreasureChest(String[] dieRoll, ArrayList<Integer> treasureList) { //如果出现仅能计算treasure card中的分数，不用考虑其他卡牌，直接算面值
+        int faceValue = 0;
+        for (int i = 0; i < dieRoll.length; i++) { //骰子序列的coin和diamonds的面值
+            if ((dieRoll[i].equals("diamond") || dieRoll[i].equals("coin")) && treasureList.contains(i)) {
+                faceValue += 100;
+            }
+        }
+        System.out.println("Treasure Chest Face Value:" + faceValue);
+        return faceValue;
+    }
+
     public void contributeArrayLoc(String[] dieRoll, String face) {  //label for fullChest cal.
         for (int i = 0; i < dieRoll.length; i++) {
             if (dieRoll[i].equals(face)) {
@@ -100,6 +111,26 @@ public class ScoreCalculator {
         return bonusPoints;
     }
 
+    public int calSequenceFromTreasureChest(String[] dieRoll, ArrayList<Integer> treasureList) {
+        int bonusPoints = 0;
+        String[] dieRollInTreasureList = new String[treasureList.size()];
+        for (int i = 0; i < treasureList.size(); i++) {
+            dieRollInTreasureList[i] = dieRoll[treasureList.get(i)];
+        }
+        //统计各元素出现次数
+        HashMap<String, Integer> times = timesCal(dieRollInTreasureList);
+        for (Map.Entry<String, Integer> entry : times.entrySet()) { //遍历map，对value值大于等于3的元素，计算序列得分，同时标记作用位置。
+            String face = entry.getKey();
+            int value = entry.getValue();
+            //System.out.println(face + ":" + value);
+            if (value >= 3) {
+                bonusPoints += addPointByOneKind(value);
+            }
+        }
+        System.out.println("Treasure Chest Sequence Value :" + bonusPoints);
+        return bonusPoints;
+    }
+
     public boolean isFullChest() {
         return fullChestSet.size() == 8;
     }
@@ -119,6 +150,19 @@ public class ScoreCalculator {
         if (card.getName().equals("Captain")) {
             System.out.println("Captain double: True");
             sumPoints = sumPoints * 2;
+        }
+        System.out.printf("======Sum %5d======\n", sumPoints);
+        return sumPoints;
+    }
+
+    public int onlyTreasureChest(String[] dieRoll) { //skull超过了限制只统计TreasureChest中
+        System.out.println("======Round Points======");
+        int sumPoints = 0;
+        if (card.getName().equals("Treasure Chest")) {
+            ArrayList<Integer> treasureList = card.treasureChest.getTreasureList();
+            if (treasureList.size() > 0) {
+                sumPoints = calFaceValueFromTreasureChest(dieRoll, treasureList) + calSequenceFromTreasureChest(dieRoll, treasureList);
+            }
         }
         System.out.printf("======Sum %5d======\n", sumPoints);
         return sumPoints;
