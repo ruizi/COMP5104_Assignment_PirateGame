@@ -172,6 +172,33 @@ public class testForPart2 {
         assertEquals(1200, player.playerRound(card, dieRoll, game));
     }
 
+    @Test
+    public void testForRow110() {//die by rolling one skull and having a FC with two skulls
+        fortuneCard = "Two Skull";
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"monkey", "monkey", "parrot", "coin", "coin", "diamond", "diamond", "skull"};
+        String input = "";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(0, player.playerRound(card, dieRoll, game));
+        System.out.println("=====isDie Check====");
+        assertTrue(player.isPlayerTurnDie(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow111() {//die by rolling 2 skulls and having a FC with 1 skull
+        fortuneCard = "One Skull";
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"monkey", "monkey", "parrot", "coin", "coin", "diamond", "skull", "skull"};
+        String input = "";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(0, player.playerRound(card, dieRoll, game));
+        System.out.println("=====isDie Check====");
+        assertTrue(player.isPlayerTurnDie(card, dieRoll, game));
+    }
+
+
     public Scanner setTestInputScanner(String input) {
         InputStream in = new ByteArrayInputStream(input.getBytes());//可以通过调用System.setIn（InputStream in）来用自己的流替换System.in。InputStream可以是一个字节数组
         return new Scanner(in);
