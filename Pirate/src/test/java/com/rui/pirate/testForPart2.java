@@ -198,6 +198,66 @@ public class testForPart2 {
         assertTrue(player.isPlayerTurnDie(card, dieRoll, game));
     }
 
+    @Test
+    public void testForRow112() {//roll 2 skulls AND have a FC with two skulls: roll 2 skulls next roll, then 1 skull => -700
+        fortuneCard = "Two Skull";
+        Card card = new Card(fortuneCard);
+        player.setScoreBoardForTest(1000);
+        String[] dieRoll = new String[]{"monkey", "monkey", "parrot", "coin", "coin", "diamond", "skull", "skull"};
+        String input = "2 " + "skull,skull,parrot,coin,coin,diamond " + "2 " + "skull,coin,coin,diamond " + "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(-700, player.playerRound(card, dieRoll, game));
+        assertEquals(1000, player.getScoreBoardByID(1));
+        assertEquals(300, player.getScoreBoardByID(2));
+        assertEquals(300, player.getScoreBoardByID(3));
+    }
+
+    @Test
+    public void testForRow113() {//roll 3 skulls AND have a FC with two skulls: roll no skulls next roll  => -500
+        fortuneCard = "Two Skull";
+        Card card = new Card(fortuneCard);
+        player.setScoreBoardForTest(1000);
+        String[] dieRoll = new String[]{"monkey", "monkey", "parrot", "coin", "coin", "skull", "skull", "skull"};
+        String input = "2 " + "monkey,monkey,parrot,coin,coin ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(-500, player.playerRound(card, dieRoll, game));
+        assertEquals(1000, player.getScoreBoardByID(1));
+        assertEquals(500, player.getScoreBoardByID(2));
+        assertEquals(500, player.getScoreBoardByID(3));
+    }
+
+    @Test
+    public void testForRow114() {//roll 3 skulls AND have a FC with 1 skull: roll 1 skull next roll then none => -500
+        fortuneCard = "One Skull";
+        Card card = new Card(fortuneCard);
+        player.setScoreBoardForTest(1000);
+        String[] dieRoll = new String[]{"monkey", "monkey", "parrot", "coin", "coin", "skull", "skull", "skull"};
+        String input = "2 " + "monkey,monkey,parrot,coin,skull " + "2 " + "monkey,monkey,parrot,coin ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(-500, player.playerRound(card, dieRoll, game));
+        assertEquals(1000, player.getScoreBoardByID(1));
+        assertEquals(500, player.getScoreBoardByID(2));
+        assertEquals(500, player.getScoreBoardByID(3));
+    }
+
+    @Test
+    public void testForRow115() {//show deduction received cannot make your score negative
+        fortuneCard = "One Skull";
+        Card card = new Card(fortuneCard);
+        player.setScoreBoardForTest(300);
+        String[] dieRoll = new String[]{"monkey", "monkey", "parrot", "coin", "coin", "skull", "skull", "skull"};
+        String input = "2 " + "monkey,monkey,parrot,coin,skull " + "2 " + "monkey,monkey,parrot,coin ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(-500, player.playerRound(card, dieRoll, game));
+        assertEquals(300, player.getScoreBoardByID(1));
+        assertEquals(0, player.getScoreBoardByID(2));
+        assertEquals(0, player.getScoreBoardByID(3));
+    }
+
 
     public Scanner setTestInputScanner(String input) {
         InputStream in = new ByteArrayInputStream(input.getBytes());//可以通过调用System.setIn（InputStream in）来用自己的流替换System.in。InputStream可以是一个字节数组
