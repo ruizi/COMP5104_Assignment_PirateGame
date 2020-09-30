@@ -97,10 +97,10 @@ public class GameService implements Serializable {
         if (act == 1) { //任何时候都可以放弃继续，而直接打分
             return true;
         } else if (act == 3) { //使用Treasure Chest或这女巫卡前需要先判断是否有这张卡
-            if (card.getName().equals("Treasure Chest") || (card.getName().equals("Sorceress") && !card.sorceress.isUsed())) {
+            if (card.getName().equals("Treasure Chest") || (card.getName().equals("Sorceress") && !card.sorceress.isUsed() && skullDice.size() > 0)) {
                 return true;
             } else {
-                System.out.println("You do not have Treasure Chest or Sorceress Card or already used. Please choose 1 for Score or 2 for Continue.");
+                System.out.println("You do not have Treasure Chest or Sorceress Card or already used or no skull to bring back. Please choose 1 for Score or 2 for Continue.");
             }
         } else { //选择re-roll需要判断当前是否可以继续 1.Treasure Chest保留的 + Skull封闭的 <=6个，才能给足够的空间进行re-roll,极限情况就是不hold已经6个不能动了。
             int calFrozenDiceNum = skullDice.size();
@@ -250,11 +250,11 @@ public class GameService implements Serializable {
         while (true) { //1和2可以自由选择，选择3需要判断是否有卡，如果选择了2需要判断是否可以继续
             System.out.println("Select an action: ");
             System.out.println("(1) Score this round");
-            System.out.println("(2) Roll again");
+            System.out.println("(2) Roll again (Choose dice to hold or Direct re-roll)");
             if (card.getName().equals("Treasure Chest")) {
                 System.out.println("(3) Put dice into Treasure Chest or get them out. and then Roll to Continue!");
             }
-            if (card.getName().equals("Sorceress") && !card.sorceress.isUsed()) {
+            if (card.getName().equals("Sorceress") && !card.sorceress.isUsed() && skullDice.size() > 0) {
                 System.out.println("(3) Get back a skull!");
             }
             choice = this.inputInt();

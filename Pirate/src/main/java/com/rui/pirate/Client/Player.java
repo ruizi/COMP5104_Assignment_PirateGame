@@ -207,7 +207,7 @@ public class Player implements Serializable {
             String[] dieRoll = game.rollDice(); //投掷骰子
 
             int roundScore = playerRound(card, dieRoll, game);
-            System.out.println("This Round you got:" + roundScore + "points");
+            System.out.println("This Round you got:" + roundScore + " points");
             game.printPlayerScores(players, scoreBoard); //打印当前各玩家分数
             clientConnection.sendScores(scoreBoard);//把得分发送出去
         }
