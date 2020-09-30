@@ -162,6 +162,19 @@ public class testForPart2 {
     }
 
     @Test
+    public void testForRow104() {//FC: 2 sword sea battle, first  roll:  4 monkeys, 1 sword, 2 parrots and a coin
+        //    then re-roll 2 parrots and get coin and 2nd sword
+        //     score is: 200 (coins) + 200 (monkeys) + 300 (swords of battle) + 500 (full chest) = 1200
+        fortuneCard = "Two Sabre";
+        Card card = new Card(fortuneCard);
+        String[] dieRoll = new String[]{"monkey", "monkey", "monkey", "monkey", "sword", "parrot", "parrot", "coin"};
+        String input = "2 " + "1,2,3,4,5,8 " + "coin,sword " + "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(1200, player.playerRound(card, dieRoll, game));
+    }
+
+    @Test
     public void testForRow107() {//FC: monkey business and RTS: 2 monkeys, 1 parrot, 2 coins, 3 diamonds   SC 1200 (bonus)
         fortuneCard = "Monkey Business";
         Card card = new Card(fortuneCard);
@@ -258,6 +271,135 @@ public class testForPart2 {
         assertEquals(0, player.getScoreBoardByID(3));
     }
 
+
+    @Test
+    public void testForRow118() {//FC 2 swords, die on first roll   => lose 300 points
+        fortuneCard = "Two Sabre";
+        Card card = new Card(fortuneCard);
+        player.setScoreBoardForTest(1000);
+        String[] dieRoll = new String[]{"monkey", "monkey", "parrot", "coin", "coin", "skull", "skull", "skull"};
+        String input = "";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(-300, player.playerRound(card, dieRoll, game));
+        assertEquals(700, player.getScoreBoardByID(1));
+        System.out.println("=====isDie Check====");
+        assertTrue(player.isPlayerTurnDie(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow119() {//FC 3 swords, die on first roll   => lose 500 points
+        fortuneCard = "Three Sabre";
+        Card card = new Card(fortuneCard);
+        player.setScoreBoardForTest(1000);
+        String[] dieRoll = new String[]{"monkey", "monkey", "parrot", "coin", "coin", "skull", "skull", "skull"};
+        String input = "";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(-500, player.playerRound(card, dieRoll, game));
+        assertEquals(500, player.getScoreBoardByID(1));
+        System.out.println("=====isDie Check====");
+        assertTrue(player.isPlayerTurnDie(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow120() {//FC 4 swords, die on first roll   => lose 1000 points
+        fortuneCard = "Four Sabre";
+        Card card = new Card(fortuneCard);
+        player.setScoreBoardForTest(800);
+        String[] dieRoll = new String[]{"monkey", "monkey", "parrot", "coin", "coin", "skull", "skull", "skull"};
+        String input = "";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(-1000, player.playerRound(card, dieRoll, game));
+        assertEquals(0, player.getScoreBoardByID(1));
+        System.out.println("=====isDie Check====");
+        assertTrue(player.isPlayerTurnDie(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow122() {//FC 2 swords, roll 3 monkeys 2 swords, 1 coin, 2 parrots  SC = 100 + 100 + 300 = 500
+        fortuneCard = "Two Sabre";
+        Card card = new Card(fortuneCard);
+        player.setScoreBoardForTest(1000);
+        String[] dieRoll = new String[]{"monkey", "monkey", "monkey", "sword", "sword", "coin", "parrot", "parrot"};
+        String input = "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(500, player.playerRound(card, dieRoll, game));
+        assertEquals(1500, player.getScoreBoardByID(1));
+    }
+
+    @Test
+    public void testForRow123() {//FC 2 swords, roll 4 monkeys 1 sword, 1 skull  2 parrots
+        //  then re-roll 2 parrots and get 1 sword and 1 skull   SC = 200 +  300 = 500
+        fortuneCard = "Two Sabre";
+        Card card = new Card(fortuneCard);
+        player.setScoreBoardForTest(1000);
+        String[] dieRoll = new String[]{"monkey", "monkey", "monkey", "monkey", "sword", "skull", "parrot", "parrot"};
+        String input = "2 " + "1,2,3,4,5 " + "sword,skull " + "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(500, player.playerRound(card, dieRoll, game));
+        assertEquals(1500, player.getScoreBoardByID(1));
+    }
+
+    @Test
+    public void testForRow125() {//FC 3 swords, roll 3 monkeys 4 swords  SC = 100 + 200 + 500 = 800
+        fortuneCard = "Three Sabre";
+        Card card = new Card(fortuneCard);
+        player.setScoreBoardForTest(1000);
+        String[] dieRoll = new String[]{"monkey", "monkey", "monkey", "sword", "sword", "sword", "sword", "parrot"};
+        String input = "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(800, player.playerRound(card, dieRoll, game));
+        assertEquals(1800, player.getScoreBoardByID(1));
+    }
+
+    @Test
+    public void testForRow126() {//FC 3 swords, roll 4 monkeys 2 swords 2 skulls
+        //     then re-roll 4 monkeys and get  2 skulls and 2 swords   -> DIE
+        fortuneCard = "Three Sabre";
+        Card card = new Card(fortuneCard);
+        player.setScoreBoardForTest(1000);
+        String[] dieRoll = new String[]{"monkey", "monkey", "monkey", "monkey", "sword", "sword", "skull", "skull"};
+        String input = "2 " + "5,6 " + "skull,skull,sword,sword ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(-500, player.playerRound(card, dieRoll, game));
+        assertEquals(500, player.getScoreBoardByID(1));
+        System.out.println("=====isDie Check====");
+        assertTrue(player.isPlayerTurnDie(card, dieRoll, game));
+    }
+
+    @Test
+    public void testForRow128() {//FC 4 swords, roll 3 monkeys 4 swords 1 skull  SC = 100 +200 + 1000 = 1300
+        fortuneCard = "Four Sabre";
+        Card card = new Card(fortuneCard);
+        player.setScoreBoardForTest(1000);
+        String[] dieRoll = new String[]{"monkey", "monkey", "monkey", "sword", "sword", "sword", "sword", "skull"};
+        String input = "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(1300, player.playerRound(card, dieRoll, game));
+        assertEquals(2300, player.getScoreBoardByID(1));
+    }
+
+    @Test
+    public void testForRow129() {//FC 4 swords, roll 3 monkeys, 1 sword, 1 skull, 1 diamond, 2 parrots
+        //   then re-roll 2 parrots and get 2 swords thus you have 3 monkeys, 3 swords, 1 diamond, 1 skull
+        //   then re-roll 3 monkeys and get  1 sword and 2 parrots  SC = 200 + 100 + 1000 = 1300
+        fortuneCard = "Four Sabre";
+        Card card = new Card(fortuneCard);
+        player.setScoreBoardForTest(1000);
+        String[] dieRoll = new String[]{"monkey", "monkey", "monkey", "sword", "skull", "diamond", "parrot", "parrot"};
+        String input = "2 " + "1,2,3,4,6 " + "sword,sword " + "2 " + "4,6,7,8 " + "sword,parrot,parrot " + "1 ";
+        Scanner scanner = setTestInputScanner(input);
+        game = new GameService(true, scanner);
+        assertEquals(1300, player.playerRound(card, dieRoll, game));
+        assertEquals(2300, player.getScoreBoardByID(1));
+    }
 
     public Scanner setTestInputScanner(String input) {
         InputStream in = new ByteArrayInputStream(input.getBytes());//可以通过调用System.setIn（InputStream in）来用自己的流替换System.in。InputStream可以是一个字节数组
