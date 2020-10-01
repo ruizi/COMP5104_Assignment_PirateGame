@@ -177,18 +177,19 @@ public class GameService implements Serializable {
         }
         //System.out.println("Allowed re-roll dice :" + rolls);
 
-        if (!testMode) { //如果是实际运行模式，就随机生成。
-            // remove the index from the ones to be rolled
-            for (int s : rolls) { //其余号码就是本轮需要投掷的骰子。
-                dieRoll = reRollDice(dieRoll, (s));
-            }
-        } else { //如果是测试模式，按target数组生成。
+        // remove the index from the ones to be rolled
+        for (int s : rolls) { //其余号码就是本轮需要投掷的骰子。
+            dieRoll = reRollDice(dieRoll, (s));
+        }
+        if (testMode) { //如果是测试模式，按target数组生成。
+            System.out.println("===Random dieRoll:");
+            printDieRoll(dieRoll);
             inputTargetArray();
             for (int i = 0; i < rolls.size(); i++) {
                 dieRoll = reRollDiceForTest(dieRoll, rolls.get(i), target.get(i));
             }
+            System.out.println("===rigged dieRoll:");
         }
-
         return dieRoll;
     }
 
