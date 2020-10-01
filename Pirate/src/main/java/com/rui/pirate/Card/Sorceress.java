@@ -18,10 +18,10 @@ public class Sorceress {
     public Sorceress() {
     }
 
-    //1. 选取的骰子不能含有skull(包括刚才复活的) 2. 至少要剩余两颗骰子
+    //1.can not hold dice with skull face (include the one just take back by Sorceress card. 2. At least left two dice.
     public Boolean heldDiceValidCheckForSorceress(ArrayList<Integer> skullDice, ArrayList<Integer> heldDice, int choose) {
         for (int i : heldDice) {   //Condition One.
-            if (skullDice.contains(i)) { //如果包含了skullDice中的骰子，是非法选取，需要重新选择。
+            if (skullDice.contains(i)) {
                 System.out.println("Can not hold skull dice, Please choose again");
                 return false;
             }
@@ -38,24 +38,24 @@ public class Sorceress {
     }
 
     public String[] sorceressCard(ArrayList<Integer> skullDice, String[] dieRoll, GameService game) {
-        game.printSkullPosition(skullDice); //打印现在骷髅的位置
+        game.printSkullPosition(skullDice); //print the skull location.
         System.out.println("choose one skull to bring back:");
         int choose = game.inputInt() - 1;
-        skullDice.remove((Integer) choose); //复活了一个skull骰子，从list中去除
+        skullDice.remove((Integer) choose); //get back one skull by using sorceress card. remove the choose dice loc from the skullDice.
         this.setUsed(true);//标记为使用了
         ArrayList<Integer> heldDice = new ArrayList<Integer>();
-        ArrayList<Integer> treasureChest = new ArrayList<Integer>();//为了复用re-roll代码，这里一定是空的，因为已经有女巫卡就不可能有treasure卡
+        ArrayList<Integer> treasureChest = new ArrayList<Integer>();
 
         while (true) {
             System.out.println("Select the die to hold : ex. 1,2,... Enter 0 for skip ");
             System.out.println("|| 1. can not hold skull dice or dice in the treasure care. ");
             System.out.println("|| 2. leave no less than two dice in the ground.");
-            heldDice = game.selectedDice(); //准备保留的卡牌
-            if (heldDice.contains(-1)) { //如果输入了0，就跳过hold步骤
+            heldDice = game.selectedDice(); //the player input the dice`s location that he/she wants to keep.
+            if (heldDice.contains(-1)) { //if input code is 0, then skip the hold process.
                 heldDice.clear();
                 break;
             }
-            if (heldDiceValidCheckForSorceress(skullDice, heldDice, choose)) { //检查选择是否合法
+            if (heldDiceValidCheckForSorceress(skullDice, heldDice, choose)) { //check if the input hold dice loc is valid or not.
                 break;
             }
         }

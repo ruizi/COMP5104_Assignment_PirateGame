@@ -23,9 +23,9 @@ public class theIslandOfSkulls {
         return scoreBoard;
     }
 
-    public void setScoreBoard(int points) { //PlayID是从1开始的。 分数不够扣不能是负数，最小为0。
+    public void setScoreBoard(int points) {
         for (int i = 0; i < 3; i++) {
-            if (i != (playID - 1)) { //除去自己以外的其他玩家扣分,先检查是否够扣，不够的话设置为0分。
+            if (i != (playID - 1)) { //deduction the other players score.
                 int reducePoints = scoreBoard[i] - points;
                 if (reducePoints >= 0) {
                     scoreBoard[i] = scoreBoard[i] - points;
@@ -69,30 +69,26 @@ public class theIslandOfSkulls {
     }
 
     public String[] reRoll(String[] dieRoll, ArrayList<Integer> skullDice, GameService game) {
-        //held中存的是玩家选择保留的骰子的编号从1开始编码。
-        //初始化一个空间大小为8的List与骰子对应。
         ArrayList<Integer> rolls = new ArrayList<Integer>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
-        //去除因skull或者玩家保留而frozen的骰子
         for (int i : skullDice) {
-            rolls.remove((Integer) i); //在list中去除需要保留的骰子的编号
+            rolls.remove((Integer) i);
         }
-        // remove the index from the ones to be rolled
-        if (!game.isTestMode()) { //如果是实际运行模式，就随机生成。
-            // remove the index from the ones to be rolled
-            for (int s : rolls) { //其余号码就是本轮需要投掷的骰子。
-                dieRoll = game.reRollDice(dieRoll, (s));
-            }
-        } else { //如果是测试模式，按target数组生成。
+        for (int s : rolls) {
+            dieRoll = game.reRollDice(dieRoll, (s));
+        }
+        if (game.testMode) { //if in the test mode, need to rigging the re-roll process.
+            System.out.println("===Random dieRoll:");
+            game.printDieRoll(dieRoll);
             game.inputTargetArray();
             for (int i = 0; i < rolls.size(); i++) {
                 dieRoll = game.reRollDiceForTest(dieRoll, rolls.get(i), game.target.get(i));
             }
+            System.out.println("===rigged dieRoll:");
         }
-
         return dieRoll;
     }
 
-    public int theGameLoop(ArrayList<Integer> skullDice, String[] dieRoll, GameService game) { //传入当前骰子情况，和骷髅骰子位置
+    public int theGameLoop(ArrayList<Integer> skullDice, String[] dieRoll, GameService game) {
         game.printSkullPosition(skullDice);
         Boolean isContinue = true;
         int roundScore = 0;

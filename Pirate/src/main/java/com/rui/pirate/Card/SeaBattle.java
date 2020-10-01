@@ -13,10 +13,10 @@ public class SeaBattle {
         this.bonusPoint = bonusPoint;
     }
 
-    public int seaBattlePoint(int swordNum) { //判断是否拿到海战分数
-        if (swordNum >= Sabre) {  //如果大于等于当前海战卡上剑个数，得到该海战卡分数。
+    public int seaBattlePoint(int swordNum) { //in order to get the bonus points from sea battle card. player need to get at least the same swords as the card required.
+        if (swordNum >= Sabre) {
             return bonusPoint;
-        } else { //否则需要减分
+        } else { //or the player will lost points.
             return -bonusPoint;
         }
     }

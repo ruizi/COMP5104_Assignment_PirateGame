@@ -84,7 +84,7 @@ public class Connection {
 
     /*
      * function: sent the local player info to the game server includes(player name & the score sheet)
-     * 把玩家信息发送到服务器。
+     * send player`s information to server.
      */
     public void sendPlayer(Player newPlayer) {
         try {

@@ -28,9 +28,9 @@ public class ScoreCalculator {
         return faceValue;
     }
 
-    public int calFaceValueFromTreasureChest(String[] dieRoll, ArrayList<Integer> treasureList) { //如果出现仅能计算treasure card中的分数，不用考虑其他卡牌，直接算面值
+    public int calFaceValueFromTreasureChest(String[] dieRoll, ArrayList<Integer> treasureList) {
         int faceValue = 0;
-        for (int i = 0; i < dieRoll.length; i++) { //骰子序列的coin和diamonds的面值
+        for (int i = 0; i < dieRoll.length; i++) { // the face value from coin and diamond dice.
             if ((dieRoll[i].equals("diamond") || dieRoll[i].equals("coin")) && treasureList.contains(i)) {
                 faceValue += 100;
             }
@@ -57,7 +57,7 @@ public class ScoreCalculator {
             }
         }
         System.out.println("Sea Battle Value :" + seaBattleValue);
-        return seaBattleValue;//返回奖励或惩罚分数
+        return seaBattleValue;
     }
 
     public void contributeArrayLoc(String[] dieRoll, String face) {  //label for fullChest cal.
@@ -121,7 +121,6 @@ public class ScoreCalculator {
             dieRoll = card.monkeyBusiness.parrotToMonkey(dieRoll);
         }
         int bonusPoints = 0;
-        //统计各元素出现次数
         HashMap<String, Integer> times = timesCal(dieRoll);
         for (Map.Entry<String, Integer> entry : times.entrySet()) {
             String face = entry.getKey();
@@ -141,9 +140,9 @@ public class ScoreCalculator {
         for (int i = 0; i < treasureList.size(); i++) {
             dieRollInTreasureList[i] = dieRoll[treasureList.get(i)];
         }
-        //统计各元素出现次数
+        //count the showing times of all the six die faces.
         HashMap<String, Integer> times = timesCal(dieRollInTreasureList);
-        for (Map.Entry<String, Integer> entry : times.entrySet()) { //遍历map，对value值大于等于3的元素，计算序列得分，同时标记作用位置。
+        for (Map.Entry<String, Integer> entry : times.entrySet()) {
             String face = entry.getKey();
             int value = entry.getValue();
             //System.out.println(face + ":" + value);
@@ -168,7 +167,7 @@ public class ScoreCalculator {
         }
     }
 
-    public int roundScore(String[] dieRoll) { //最后的总分计算。
+    public int roundScore(String[] dieRoll) { //cal the round score.
         System.out.println("======Round Points======");
         int sumPoints = calFaceValue(dieRoll) + calSequence(dieRoll) + calSeaBattle(dieRoll) + calFullChest();
         if (card.getName().equals("Captain")) {
@@ -179,7 +178,7 @@ public class ScoreCalculator {
         return sumPoints;
     }
 
-    public int onlyTreasureChest(String[] dieRoll) { //skull超过了限制只统计TreasureChest中
+    public int onlyTreasureChest(String[] dieRoll) { //cal the points from treasure chest.
         System.out.println("======Round Points======");
         int sumPoints = 0;
         if (card.getName().equals("Treasure Chest")) {

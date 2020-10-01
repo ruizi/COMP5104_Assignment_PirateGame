@@ -63,7 +63,7 @@ public class ServerThread implements Runnable{
     /*
      * send the scores to other players
      */
-    public void sendPlayers(Player[] pl) { //一个个的发送玩家数据，对应在player.java中第342行一个个接收玩家数据
+    public void sendPlayers(Player[] pl) {
         try {
             for (Player p : pl) {
                 dOut.writeObject(p);
@@ -80,7 +80,7 @@ public class ServerThread implements Runnable{
     /*
      * receive scores of other players
      */
-    public void sendTurnNo(int r) { //对应于player.java中216行
+    public void sendTurnNo(int r) {
         try {
             dOut.writeInt(r);
             dOut.flush();

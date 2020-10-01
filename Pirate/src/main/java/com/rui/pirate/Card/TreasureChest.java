@@ -49,7 +49,7 @@ public class TreasureChest {
         System.out.println();
     }
 
-    //1. 选取的骰子不能含有skull  2.不能选取宝箱内的骰子
+    //1.can not add skull into treasure chest. 2. can not add dice which are already in treasure chest.
     public boolean addInValidCheck(ArrayList<Integer> skullDice, ArrayList<Integer> chosenDiceLoc) {
         for (int i : chosenDiceLoc) {
             if (skullDice.contains(i)) {
@@ -64,7 +64,7 @@ public class TreasureChest {
         return true;
     }
 
-    //1.不能remove本就不在treasure list中的骰子
+    //1. can not remove dice from chest which is actually not in the treasure chest.
     public boolean removeValidCheck(ArrayList<Integer> chosenDiceLoc) {
         for (int i : chosenDiceLoc) {
             if (!treasureList.contains(i)) {
@@ -82,13 +82,13 @@ public class TreasureChest {
         while (true) {
             if (code == 1) {
                 System.out.println("Select the dice to add into treasure chest: ex. 1,2,... ");
-                chosenDiceLoc = game.selectedDice();//输入准备放入Treasure Chest中的卡牌
+                chosenDiceLoc = game.selectedDice();//the player add dice into treasure chest by input the dice`s loc.
                 if (addInValidCheck(skullDice, chosenDiceLoc)) {
                     break;
                 }
             } else {
                 System.out.println("Select the dice to remove from treasure chest: ex. 1,2,... ");
-                chosenDiceLoc = game.selectedDice();//输入准备放入Treasure Chest中的卡牌
+                chosenDiceLoc = game.selectedDice();//the player remove dice from treasure chest by input the dice`s loc.
                 if (removeValidCheck(chosenDiceLoc)) {
                     break;
                 }
@@ -97,7 +97,7 @@ public class TreasureChest {
         return chosenDiceLoc;
     }
 
-    public boolean exitValidCheckPass(ArrayList<Integer> skullDice) {//3. 至少要剩余两颗骰子
+    public boolean exitValidCheckPass(ArrayList<Integer> skullDice) {//at least left two dice.
         if ((treasureList.size() + skullDice.size()) > 6) { //Condition Three.
             System.out.println("Add too much, In each roll, you must use at least two dice to start re-roll. Please remove out some dice from treasure chest.");
             return false;
@@ -106,14 +106,14 @@ public class TreasureChest {
     }
 
     public void treasureChestOperation(ArrayList<Integer> skullDice, String[] dieRoll, GameService game) {
-        game.printSkullPosition(skullDice); //打印现在骷髅的位置
+        game.printSkullPosition(skullDice); //print the skulls location.
         printDiceInTreasureChest();
         while (true) {
             int action;
             while (true) {
                 System.out.println("Select an action:  (0) Exit || (1) add || (2) remove");
                 action = game.inputInt();
-                if (action == 0 || action == 1 || action == 2) { //检查选择是否合法
+                if (action == 0 || action == 1 || action == 2) {
                     break;
                 } else {
                     System.out.println("Invalid Input");

@@ -19,7 +19,7 @@ public class GameServer implements Serializable {
     int PlayerID;
 
     public static void main(String[] args) throws Exception {
-        GameServer gameServer = new GameServer(); //GameServer构造函数
+        GameServer gameServer = new GameServer();
         gameServer.acceptConnections();
         gameServer.gameLoop();
     }
@@ -51,29 +51,28 @@ public class GameServer implements Serializable {
     public void acceptConnections() throws ClassNotFoundException {
         try {
             System.out.println("Waiting for players...");
-            while (PlayerID < 3) { //等待三个用户的连接
+            while (PlayerID < 3) { //wait for all the three player establish connection with the server.
                 Socket s = ss.accept();
                 PlayerID++;
 
-                ServerThread serverThread = new ServerThread(s, PlayerID); //这里的numPlayer直接导入Server的构造器，作为玩家的id
-                //第一个使用socket连接进来的就是一号玩家，类推
+                ServerThread serverThread = new ServerThread(s, PlayerID); //set new server thread to establish the connection.
                 // send the playerID to the player
-                serverThread.getdOut().writeInt(serverThread.getPlayerId());//向玩家客户端下发玩家编号
+                serverThread.getdOut().writeInt(serverThread.getPlayerId());//send player ID to the client.
                 serverThread.getdOut().flush();
 
                 // get the player name
-                Player connectingIn = (Player) serverThread.getdIn().readObject(); //得到客户端返回的玩家信息
+                Player connectingIn = (Player) serverThread.getdIn().readObject();
                 System.out.println("Player " + serverThread.getPlayerId() + " ~ " + connectingIn.name + " ~ has joined");
 
                 // add the player to the player list
-                players[serverThread.getPlayerId() - 1] = connectingIn; //在服务器上的player表添加当前连接进入的用户
-                playerServerThread[PlayerID - 1] = serverThread;//记录下与当前玩家对应连接的server
+                players[serverThread.getPlayerId() - 1] = connectingIn; //add player to the player array in server.
+                playerServerThread[PlayerID - 1] = serverThread;
             }
             System.out.println("Three players have joined the game");
 
             // start the server threads
             for (int i = 0; i < playerServerThread.length; i++) {
-                Thread t = new Thread(playerServerThread[i]);//在游戏服务器上启动分别对应于三个玩家的服务进程
+                Thread t = new Thread(playerServerThread[i]);
                 t.start();
                 System.out.println("No." + i + " player server for player:" + playerServerThread[i].getPlayerId() + " ->Thread started!");
             }
@@ -112,7 +111,7 @@ public class GameServer implements Serializable {
                 winnerID = i;
             }
         }
-        System.out.println("The winner is " + players[winnerID].name);//输出winner
+        System.out.println("The winner is " + players[winnerID].name);//show the winner
         return winnerID;
     }
 
@@ -125,17 +124,17 @@ public class GameServer implements Serializable {
         System.out.println("|---------------------------------------------|");
     }
 
-    public void gameLoop() { //需要修改循环与记分顺序。每次三人投掷完，后统计三人当前得分，如果大于6000则直接结束游戏。
+    public void gameLoop() { // the server main game loop.
         try {
-            playerServerThread[0].sendPlayers(players);//分别向玩家发送服务器维护的玩家表，从而在玩家端能看到其他玩家的信息
+            playerServerThread[0].sendPlayers(players);
             playerServerThread[1].sendPlayers(players);
             playerServerThread[2].sendPlayers(players);
 
-            while (!isEnd()) { //如果小于最大轮数继续 ###注意这里没有最大轮数，停止点是第一个到达6000分。
+            while (!isEnd()) { //check if there is a winner
 
                 Round++;
 
-                // send the round number 三个进程分别向用户推送当前局数以及其他玩家的得分信息，以及从客户端获得的用户该轮得分更新到得分表中。
+                // send the round number
                 System.out.println("*****************************************");
                 System.out.println("Round number " + Round);
                 playerServerThread[0].sendTurnNo(Round);
@@ -156,12 +155,12 @@ public class GameServer implements Serializable {
 
             }
 
-            //向客户端发送游戏终止信号。
+            //send the game loop end signal to clients.
             playerServerThread[0].sendTurnNo(-1);
             playerServerThread[1].sendTurnNo(-1);
             playerServerThread[2].sendTurnNo(-1);
 
-            // send final score sheet after bonus added 将最后的得分发送给各客户端。
+            // send final score sheet after bonus added
             playerServerThread[0].sendScoreBoard(scoreBoard);
             playerServerThread[1].sendScoreBoard(scoreBoard);
             playerServerThread[2].sendScoreBoard(scoreBoard);
@@ -169,7 +168,7 @@ public class GameServer implements Serializable {
             int winnerID = getWinner();
 
             for (int i = 0; i < playerServerThread.length; i++) {
-                playerServerThread[i].sendWinnerID(winnerID);//向各个终端推送winner的信息让其输出打印
+                playerServerThread[i].sendWinnerID(winnerID);//sent winner`s info to clients.
             }
         } catch (Exception e) {
             e.printStackTrace();

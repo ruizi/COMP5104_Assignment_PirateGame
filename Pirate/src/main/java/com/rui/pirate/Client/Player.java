@@ -51,9 +51,9 @@ public class Player implements Serializable {
         this.scoreBoard[PlayerID - 1] = Math.max(currentScore, 0);
     }
 
-    public void setScoreBoardForSkullIslands(int PlayerID, int score) { //PlayID是从1开始的。 分数不够扣不能是负数，最小为0。
+    public void setScoreBoardForSkullIslands(int PlayerID, int score) { //the PlayID starts from 1. and the score can not down to negative.
         for (int i = 0; i < 3; i++) {
-            if (i != (PlayerID - 1)) { //除去自己以外的其他玩家扣分,先检查是否够扣，不够的话设置为0分。传递的是负分
+            if (i != (PlayerID - 1)) {
                 int currentPoints = scoreBoard[i] + score;
                 scoreBoard[i] = Math.max(currentPoints, 0);
             }
@@ -82,15 +82,15 @@ public class Player implements Serializable {
         int skullNum = game.skullNum(dieRoll, card);
         if (skullNum >= 4) {
             isDie = true;
-        } else if (skullNum == 3) { //骷髅累计等于3个的情况
+        } else if (skullNum == 3) { //the situation that gets exactly three skulls.
             //first, check the player if he/she has a Sorceress card which can bring back to life one skull
-            if (card.getName().equals("Sorceress") && !card.sorceress.isUsed()) { //拥有女巫卡且未使用
+            if (card.getName().equals("Sorceress") && !card.sorceress.isUsed()) { //if has the unused sorceress card, the player can be alive.
                 isDie = false;
-            } else {//没有女巫卡或者已经使用
-                System.out.println("Got " + skullNum + " skulls ,you round ends!");
+            } else {
+                System.out.println("Got " + skullNum + " skulls ,you round ends!");  //if player do not has sorceress card or already used, then the round ends.
                 isDie = true;
             }
-        } else { //骷髅小于3个的情况
+        } else { //the skulls num under three, which is fine to continue.
             isDie = false;
         }
         if (game.isTestMode()) {
@@ -106,78 +106,77 @@ public class Player implements Serializable {
         game.printDieRoll(dieRoll);
         int turnCount = 1;
 
-        while (!isPlayerTurnDie(card, dieRoll, game)) { //还活着的情况 1.等于3个骷髅的时候还拥有女巫卡。2.正常情况
+        while (!isPlayerTurnDie(card, dieRoll, game)) { //check if the player is still alive.
             ArrayList<Integer> skullDice = game.locateSkull(dieRoll);
             int skullNum = game.skullNum(dieRoll, card);
-            if (skullNum == 3 && card.getName().equals("Sorceress") && !card.sorceress.isUsed()) {//拥有女巫卡且未使用
-                dieRoll = card.sorceress.sorceressCard(skullDice, dieRoll, game);//新一轮的投掷情况
-            } else { //正常情况下，skull的个数小于3个
+            if (skullNum == 3 && card.getName().equals("Sorceress") && !card.sorceress.isUsed()) {//has sorceress card and unused.
+                dieRoll = card.sorceress.sorceressCard(skullDice, dieRoll, game);
+            } else { //skull num under three. input the action the player wants to go.
                 int act = game.menuChoice(dieRoll, card, skullDice);
-                if (act == 1) { //直接选择结束，进入记分程序。
+                if (act == 1) { // act equals one means the player give up to continue re-roll and chose to score the board directly.
                     break;
-                } else if (act == 2) { //正常进行re-roll
-                    dieRoll = game.reRollInputAndCheck(skullDice, dieRoll, card); //表示没有treasure chest卡，按正常逻辑处理
-                } else { //选择进行Treasure Chest操作 或者女巫卡
+                } else if (act == 2) { //the player chose to re-roll without treasure chest card or sorceress card.
+                    dieRoll = game.reRollInputAndCheck(skullDice, dieRoll, card);
+                } else { //choose to use Treasure Chest or Sorceress card.
                     if (card.getName().equals("Sorceress") && !card.sorceress.isUsed()) {
-                        dieRoll = card.sorceress.sorceressCard(skullDice, dieRoll, game);//新一轮的投掷情况
-                    } else { //Treasure Chest操作
+                        dieRoll = card.sorceress.sorceressCard(skullDice, dieRoll, game);
+                    } else { //Treasure Chest
                         card.treasureChest.treasureChestOperation(skullDice, dieRoll, game);
-                        dieRoll = game.reRollInputAndCheck(skullDice, dieRoll, card); //使用treasure chest卡后re-roll.
+                        dieRoll = game.reRollInputAndCheck(skullDice, dieRoll, card);
                     }
                 }
             }
             game.printDieRoll(dieRoll); //游戏继续进行
             turnCount++;
         }
-        //分数 结束了正常循环的情况
+        //cal Score phrase.
         ArrayList<Integer> skullDice = game.locateSkull(dieRoll);
         int skullNum = game.skullNum(dieRoll, card);
 
-        if (skullNum >= 4) { //大于4个骷髅情况： 1.先考虑是不是第一轮进入了骷髅岛.
-            if (turnCount == 1) { //第一轮出现4个骷髅且持有海战卡，结束本轮，未实现海战。
+        if (skullNum >= 4) { //if the skull num is over four.
+            if (turnCount == 1) { //1.if the situation happened on the first turn without holding sea battle card, the player comes to skull island mode.
                 if (card.getName().equals("Two Sabre") || card.getName().equals("Three Sabre") || card.getName().equals("Four Sabre")) {
-                    roundScore = card.seaBattle.seaBattleFailed(); //海战卡扣分
-                    setScoreBoardByID(playerId, roundScore); //修改记分牌
+                    roundScore = card.seaBattle.seaBattleFailed(); //if has sea battle card, in this case, the player will lose his points.
+                    setScoreBoardByID(playerId, roundScore);
                     System.out.println("Got " + skullNum + " skulls in the first turn while hold Sea Battle Card ,you round ends! Lose:" + roundScore + " points");
-                } else { //没有海战卡，启动骷髅岛
+                } else { //with out sea battle card, start the skull of islands.
                     System.out.println("You got " + skullNum + " skulls in your first roll. So Welcome to the Island of Skulls!");
-                    theIslandOfSkulls islandOfSkulls = new theIslandOfSkulls(card, scoreBoard, playerId);//启动骷髅岛模式，初始化模式各参数
-                    roundScore = islandOfSkulls.theGameLoop(skullDice, dieRoll, game);//游戏循环结束返回更新的记分版。
+                    theIslandOfSkulls islandOfSkulls = new theIslandOfSkulls(card, scoreBoard, playerId);
+                    roundScore = islandOfSkulls.theGameLoop(skullDice, dieRoll, game);
                     System.out.println(roundScore);
                     setScoreBoardForSkullIslands(playerId, roundScore);//修改记分牌
                 }
-            } else { //2.如果不是第一轮，那检查是否有treasure chest卡，有的话计算保留分数，没有得话看是否有海战卡，有海战卡要丢分，没有得0分。
-                if (card.getName().equals("Treasure Chest")) {//检查是treasure card保留分数。
+            } else { //2.if it`s not on the first turn, then the rounds end with points from treasure cheat card if the player has and operator this card.
+                if (card.getName().equals("Treasure Chest")) {
                     roundScore = scoreCalculator.onlyTreasureChest(dieRoll);
                     setScoreBoardByID(playerId, roundScore);
                     System.out.println("You got " + roundScore + " points from treasure chest this round.");
                 } else {
-                    //无treasure card。检查是否有海战卡 ，有海战卡需要扣分，没有海战卡就得0分。
+                    //if the played do not have treasure card but a sea battle card, she/he will lose some points.
                     if (card.getName().equals("Two Sabre") || card.getName().equals("Three Sabre") || card.getName().equals("Four Sabre")) {
                         System.out.println("Got " + skullNum + " skulls in this roll while hold Sea Battle Card ,you round ends!");
                         roundScore = card.seaBattle.seaBattleFailed();
-                        setScoreBoardByID(playerId, roundScore); //修改记分牌
-                    } else { //没有海战卡，得0分。
+                        setScoreBoardByID(playerId, roundScore);
+                    } else { //and other case got zero points.
                         System.out.println("Ops,You got 0 point this Round.");
                     }
                 }
             }
-        } else if (skullNum == 3) { //3个骷髅，没有女巫卡或者已经使用。1.没有女巫卡,treasure card或者sea battle card 2.有女巫卡但已经使用了，就直接得0分。
-            if (card.getName().equals("Treasure Chest")) {//检查是treasure card保留分数。
+        } else if (skullNum == 3) { //if finally got three skulls and without Sorceress or already used, then check the score from treasure chest or may lose points by holding sea battle card.
+            if (card.getName().equals("Treasure Chest")) {
                 roundScore = scoreCalculator.onlyTreasureChest(dieRoll);
                 setScoreBoardByID(playerId, roundScore);
                 System.out.println("You got " + roundScore + " points this Round.");
             } else {
-                //无treasure card。检查是否有海战卡 ，有海战卡需要扣分，没有海战卡就得0分。
                 if (card.getName().equals("Two Sabre") || card.getName().equals("Three Sabre") || card.getName().equals("Four Sabre")) {
                     roundScore = card.seaBattle.seaBattleFailed();
                     System.out.println("Sea battle failed, lose " + roundScore + " Points.");
                     setScoreBoardByID(playerId, roundScore); //修改记分牌
-                } else { //没有海战卡，或者女巫卡已经使用。不扣分，得0分。
+                } else {
                     System.out.println("Ops,You got 0 point this Round.");
                 }
             }
-        } else { //正常情况下，主动结束游戏轮，记分。int addScore
+        } else { //the player chose to stop re-roll and score the board directly.
             roundScore = scoreCalculator.roundScore(dieRoll);
             setScoreBoardByID(playerId, roundScore);
             System.out.println("You got " + roundScore + " points this Round.");
@@ -190,12 +189,12 @@ public class Player implements Serializable {
         // receive players once for names
         players = clientConnection.receivePlayer();
         while (true) {
-            int round = clientConnection.receiveRoundNo();//接收服务器传递过来的当前投掷轮数
-            if (round == -1) //作为最后的退出
+            int round = clientConnection.receiveRoundNo();//receive the round num from server.
+            if (round == -1) //if the server return round num by -1, means the game ends with a player wins.
                 break;
             System.out.println("\n \n \n ********Round Number " + round + "********");
-            scoreBoard = clientConnection.receiveScoreBoard();//同步各玩家的分数
-            game.printPlayerScores(players, scoreBoard); //打印当前各玩家分数
+            scoreBoard = clientConnection.receiveScoreBoard();//receive the latest score board from server
+            game.printPlayerScores(players, scoreBoard); //print the score board.
 
             //1. draw one fortune card.
             String fortuneCard = game.drawFortuneCard();
@@ -204,10 +203,10 @@ public class Player implements Serializable {
 
 
             //2. roll the overall eight dice at the beginning
-            String[] dieRoll = game.rollDice(); //投掷骰子
+            String[] dieRoll = game.rollDice();
 
             //In short video mode.
-            game.setShortVideoMode(2);
+            game.setShortVideoMode(0);
             if (game.shortVideoMode == 1) {
                 dieRoll = game.shortVideoMode1_dieRoll(playerId);
                 if (playerId == 1) {
@@ -231,17 +230,16 @@ public class Player implements Serializable {
 
             int roundScore = playerRound(card, dieRoll, game);
             System.out.println("This Round you got:" + roundScore + " points");
-            game.printPlayerScores(players, scoreBoard); //打印当前各玩家分数
-            clientConnection.sendScores(scoreBoard);//把得分发送出去
+            game.printPlayerScores(players, scoreBoard);
+            clientConnection.sendScores(scoreBoard);//send the edited score board to the server.
         }
     }
 
-    //接收服务器的结束信号，输出winner
     public void showTheWinner(GameService game) {
-        scoreBoard = clientConnection.receiveScoreBoard();//同步各玩家的分数
+        scoreBoard = clientConnection.receiveScoreBoard();
         System.out.println("The Final Score Board：");
-        game.printPlayerScores(players, scoreBoard); //打印当前各玩家分数
-        int winnerID = clientConnection.receiveWinnerID() + 1;//接收服务器传递过来的赢家ID号
+        game.printPlayerScores(players, scoreBoard);
+        int winnerID = clientConnection.receiveWinnerID() + 1;//received the winner ID from the server.
         if (playerId == winnerID) {
             System.out.println("You win!");
         } else {
@@ -252,18 +250,17 @@ public class Player implements Serializable {
 
 
     public static void main(String[] args) {
-        //获取用户名字输入
+        //get the player`s name.
         Scanner myObj = new Scanner(System.in);
         System.out.print("What is your name ? ");
         String name = myObj.next();
 
-        //构造玩家对象，设置姓名与初始化得分。
+        //initial construct a player object by it`s name.
         Player p = new Player(name);
-        //本地初始化三个玩家
         p.initializePlayers();
-        //连接客户端
+        //try to establish connection to the game server.
         p.connectToClient();
-        GameService game = new GameService(); //初始化构造一个游戏局
+        GameService game = new GameService();// init a game service which will supply kinds of service which helps game`s logic process.
         p.startGame(game);
         p.showTheWinner(game);
         myObj.close();
