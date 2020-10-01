@@ -201,10 +201,33 @@ public class Player implements Serializable {
             String fortuneCard = game.drawFortuneCard();
             System.out.println(fortuneCard);
             Card card = new Card(fortuneCard);
-            System.out.println("| CARD ===> " + card.getName());
+
 
             //2. roll the overall eight dice at the beginning
             String[] dieRoll = game.rollDice(); //投掷骰子
+
+            //In short video mode.
+            game.setShortVideoMode(2);
+            if (game.shortVideoMode == 1) {
+                dieRoll = game.shortVideoMode1_dieRoll(playerId);
+                if (playerId == 1) {
+                    card = new Card("Gold");
+                } else if (playerId == 2) {
+                    card = new Card("Gold");
+                } else {
+                    card = new Card("Captain");
+                }
+            } else if (game.shortVideoMode == 2) {
+                dieRoll = game.shortVideoMode2_dieRoll(playerId);
+                if (playerId == 1) {
+                    card = new Card("Gold");
+                } else if (playerId == 2) {
+                    card = new Card("Gold");
+                } else {
+                    card = new Card("Gold");
+                }
+            }
+            System.out.println("| CARD ===> " + card.getName());
 
             int roundScore = playerRound(card, dieRoll, game);
             System.out.println("This Round you got:" + roundScore + " points");

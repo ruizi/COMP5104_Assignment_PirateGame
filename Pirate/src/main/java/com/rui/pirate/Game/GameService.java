@@ -14,6 +14,8 @@ public class GameService implements Serializable {
 
     public boolean testMode = false;
 
+    public int shortVideoMode;
+
     public Scanner scanner;
 
     public ArrayList<String> target;
@@ -47,6 +49,14 @@ public class GameService implements Serializable {
         this.testMode = testMode;
         this.scanner = scanner;
         this.target = target;
+    }
+
+    public void setShortVideoMode(int shortVideoMode) {
+        this.shortVideoMode = shortVideoMode;
+    }
+
+    public int isShortVideoMode() {
+        return shortVideoMode;
     }
 
     public boolean isTestMode() {
@@ -311,5 +321,25 @@ public class GameService implements Serializable {
         System.out.printf("|%8s|  |%8s|  |%8s|  |%8s|  |%8s|  |%8s|  |%8s|  |%8s|  \n", dieRoll[0], dieRoll[1], dieRoll[2], dieRoll[3], dieRoll[4], dieRoll[5], dieRoll[6], dieRoll[7]);
         System.out.println("|________|  |________|  |________|  |________|  |________|  |________|  |________|  |________|  ");
 
+    }
+
+    public String[] shortVideoMode1_dieRoll(int playerID) {
+        if (playerID == 1) {
+            return new String[]{"sword", "sword", "sword", "parrot", "parrot", "skull", "skull", "skull"};
+        } else if (playerID == 2) {
+            return new String[]{"sword", "sword", "sword", "parrot", "parrot", "monkey", "monkey", "skull"};
+        } else {
+            return new String[]{"sword", "sword", "sword", "sword", "sword", "sword", "sword", "sword"};
+        }
+    }
+
+    public String[] shortVideoMode2_dieRoll(int playerID) {
+        if (playerID == 1) {
+            return new String[]{"sword", "sword", "sword", "parrot", "parrot", "parrot", "coin", "skull"};
+        } else if (playerID == 2) {
+            return new String[]{"sword", "sword", "sword", "sword", "sword", "sword", "sword", "sword"};
+        } else {
+            return new String[]{"sword", "sword", "sword", "sword", "parrot", "parrot", "skull", "skull"};
+        }
     }
 }

@@ -131,7 +131,6 @@ public class GameServer implements Serializable {
             playerServerThread[1].sendPlayers(players);
             playerServerThread[2].sendPlayers(players);
 
-            scoreBoard = new int[]{3000, 1000, 1000};
             while (!isEnd()) { //如果小于最大轮数继续 ###注意这里没有最大轮数，停止点是第一个到达6000分。
 
                 Round++;
