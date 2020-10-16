@@ -51,6 +51,10 @@ public class GameService implements Serializable {
         this.target = target;
     }
 
+    public void setScanner(Scanner scanner) {
+        this.scanner = scanner;
+    }
+
     public void setShortVideoMode(int shortVideoMode) {
         this.shortVideoMode = shortVideoMode;
     }
@@ -179,7 +183,6 @@ public class GameService implements Serializable {
             rolls.remove((Integer) i); //remove the dice which can not be re-rolled.
         }
         //System.out.println("Allowed re-roll dice :" + rolls);
-
         // remove the index from the ones to be rolled
         for (int s : rolls) {
             dieRoll = reRollDice(dieRoll, (s));
@@ -187,7 +190,9 @@ public class GameService implements Serializable {
         if (testMode) { //if in the test mode, need to rigging the re-roll process.
             System.out.println("===Random dieRoll:");
             printDieRoll(dieRoll);
+
             inputTargetArray();
+
             for (int i = 0; i < rolls.size(); i++) {
                 dieRoll = reRollDiceForTest(dieRoll, rolls.get(i), target.get(i));
             }
@@ -245,6 +250,7 @@ public class GameService implements Serializable {
 
     public void inputTargetArray() {
         Scanner myObj = scanner;
+        //System.out.println(myObj.next());
         String[] inputTarget = (myObj.next()).replaceAll("\\s", "").split(",");
         target = new ArrayList<>(Arrays.asList(inputTarget));
     }

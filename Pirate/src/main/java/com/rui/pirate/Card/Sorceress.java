@@ -45,21 +45,22 @@ public class Sorceress {
         this.setUsed(true);//标记为使用了
         ArrayList<Integer> heldDice = new ArrayList<Integer>();
         ArrayList<Integer> treasureChest = new ArrayList<Integer>();
-
         while (true) {
             System.out.println("Select the die to hold : ex. 1,2,... Enter 0 for skip ");
-            System.out.println("|| 1. can not hold skull dice or dice in the treasure care. ");
-            System.out.println("|| 2. leave no less than two dice in the ground.");
+            System.out.println("|| Rule 1. can not hold skull dice or dice in the treasure care. ");
+            System.out.println("|| Rule 2. leave no less than two dice in the ground.");
             heldDice = game.selectedDice(); //the player input the dice`s location that he/she wants to keep.
             if (heldDice.contains(-1)) { //if input code is 0, then skip the hold process.
                 heldDice.clear();
                 break;
             }
+
             if (heldDiceValidCheckForSorceress(skullDice, heldDice, choose)) { //check if the input hold dice loc is valid or not.
                 break;
             }
         }
         dieRoll = game.reRollNotHeld(dieRoll, heldDice, skullDice, treasureChest);
+
         //game.printDieRoll(dieRoll);
         return dieRoll;
     }

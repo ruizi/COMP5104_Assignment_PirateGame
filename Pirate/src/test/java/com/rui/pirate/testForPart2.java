@@ -31,6 +31,7 @@ public class testForPart2 {
         ArrayList<Integer> skullDice = game.locateSkull(dieRoll);
         assertEquals(2, skullDice.size());
         card.sorceress.sorceressCard(skullDice, dieRoll, game);
+        game.printDieRoll(dieRoll);
         assertTrue(card.sorceress.isUsed());
         assertEquals(1, skullDice.size());
         System.out.println("=====isDie Check====");
@@ -54,13 +55,13 @@ public class testForPart2 {
         Card card = new Card(fortuneCard);
         String[] dieRoll = new String[]{"coin", "parrot", "parrot", "parrot", "parrot", "sword", "sword", "sword"};
         String input = "skull,sword,sword " + "6 " + "1,2,3,4,5 " + "monkey,sword,sword ";
-        Scanner scanner = setTestInputScanner(input);
+        Scanner scanner = setTestInputScanner(input);//System.lineSeparator();
         game = new GameService(true, scanner);
         ArrayList<Integer> held = new ArrayList<>(List.of(0, 1, 2, 3, 4));
         ArrayList<Integer> treasureChest = new ArrayList<>();
         ArrayList<Integer> skullDice = game.locateSkull(dieRoll);
-        game.reRollNotHeld(dieRoll, held, skullDice, treasureChest);
-        game.printDieRoll(dieRoll);
+        dieRoll = game.reRollNotHeld(dieRoll, held, skullDice, treasureChest);
+        skullDice = game.locateSkull(dieRoll);
         card.sorceress.sorceressCard(skullDice, dieRoll, game);//新一轮的投掷情况
         skullDice = game.locateSkull(dieRoll);
         game.printDieRoll(dieRoll);

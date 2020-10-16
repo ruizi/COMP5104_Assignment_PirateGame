@@ -17,6 +17,7 @@ public class Player implements Serializable {
      */
     private static final long serialVersionUID = 1L;
     public String name; //Player`s name
+    public boolean ticket = false;
 
     int playerId = 1;
 
@@ -29,6 +30,15 @@ public class Player implements Serializable {
         name = n; //set the input string as the player`s name.
         //init a scoreSheet for this player with all blanks equals -1
         Arrays.fill(scoreBoard, -1);
+    }
+
+    public boolean ticketStatus() {
+        if (ticket) {
+            System.out.println("Not End.");
+        } else {
+            System.out.println("End of the turn.");
+        }
+        return ticket;
     }
 
     //get the local player object
@@ -195,7 +205,7 @@ public class Player implements Serializable {
             System.out.println("\n \n \n ********Round Number " + round + "********");
             scoreBoard = clientConnection.receiveScoreBoard();//receive the latest score board from server
             game.printPlayerScores(players, scoreBoard); //print the score board.
-
+            ticket = true;
             //1. draw one fortune card.
             String fortuneCard = game.drawFortuneCard();
             System.out.println(fortuneCard);
@@ -232,6 +242,7 @@ public class Player implements Serializable {
             System.out.println("This Round you got:" + roundScore + " points");
             game.printPlayerScores(players, scoreBoard);
             clientConnection.sendScores(scoreBoard);//send the edited score board to the server.
+            ticket = false;
         }
     }
 

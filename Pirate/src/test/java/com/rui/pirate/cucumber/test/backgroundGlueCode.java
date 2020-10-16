@@ -1,4 +1,4 @@
-package com.rui.pirate.cucumber;
+package com.rui.pirate.cucumber.test;
 
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
