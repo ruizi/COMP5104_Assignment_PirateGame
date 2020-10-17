@@ -7,7 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class ServerThread implements Runnable{
+public class ServerThread implements Runnable {
     private Socket socket;
     private ObjectInputStream dIn;
     private ObjectOutputStream dOut;
@@ -82,12 +82,23 @@ public class ServerThread implements Runnable{
      */
     public void sendTurnNo(int r) {
         try {
+            //System.out.println("send round: " + r);
             dOut.writeInt(r);
             dOut.flush();
         } catch (Exception e) {
             System.out.println("Score sheet not received");
             e.printStackTrace();
         }
+    }
+
+    public String getPlayerInfo() {
+        try {
+            return dIn.readUTF();
+        } catch (Exception e) {
+            System.out.println("Player Info not received");
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /*

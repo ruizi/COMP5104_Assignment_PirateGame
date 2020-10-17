@@ -19,10 +19,11 @@ public class Player implements Serializable {
     public String name; //Player`s name
     public boolean ticket = false;
 
+    int round = 0;
     int playerId = 1;
 
     private int[] scoreBoard = new int[3];
-    static Connection clientConnection;
+    Connection clientConnection;
     Player[] players = new Player[3];
 
     //constructor for Player
@@ -30,6 +31,40 @@ public class Player implements Serializable {
         name = n; //set the input string as the player`s name.
         //init a scoreSheet for this player with all blanks equals -1
         Arrays.fill(scoreBoard, -1);
+    }
+
+    public Player(String name, int playerId) {
+        this.name = name;
+        this.playerId = playerId;
+        Arrays.fill(scoreBoard, -1);
+    }
+
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
+    }
+
+    public void setRound(int round) {
+        this.round = round;
+    }
+
+    public int getRound() {
+        return round;
+    }
+
+    public void setPlayers(Player[] players) {
+        this.players = players;
+    }
+
+    public Player[] getPlayers() {
+        return players;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getPlayerId() {
+        return playerId;
     }
 
     public boolean ticketStatus() {
@@ -44,6 +79,18 @@ public class Player implements Serializable {
     //get the local player object
     public Player getPlayer() {
         return this;
+    }
+
+    public Connection getClientConnection() {
+        return clientConnection;
+    }
+
+    public int[] getScoreBoard() {
+        return scoreBoard;
+    }
+
+    public void setScoreBoard(int[] scoreBoard) {
+        this.scoreBoard = scoreBoard;
     }
 
     public int getScoreBoardByID(int PlayerID) {
@@ -81,7 +128,8 @@ public class Player implements Serializable {
         clientConnection = new Connection();
         playerId = clientConnection.getConnectionID();
         System.out.println("Connected as No. " + playerId + " player.");
-        clientConnection.sendPlayer(getPlayer());
+        //clientConnection.sendPlayer(getPlayer());
+        clientConnection.sendPlayerInfo(playerId, name);
     }
 
 
@@ -199,7 +247,7 @@ public class Player implements Serializable {
         // receive players once for names
         players = clientConnection.receivePlayer();
         while (true) {
-            int round = clientConnection.receiveRoundNo();//receive the round num from server.
+            round = clientConnection.receiveRoundNo();//receive the round num from server.
             if (round == -1) //if the server return round num by -1, means the game ends with a player wins.
                 break;
             System.out.println("\n \n \n ********Round Number " + round + "********");

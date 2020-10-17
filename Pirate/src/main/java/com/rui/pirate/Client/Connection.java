@@ -86,16 +86,25 @@ public class Connection {
      * function: sent the local player info to the game server includes(player name & the score sheet)
      * send player`s information to server.
      */
-    public void sendPlayer(Player newPlayer) {
+//    public void sendPlayer(Player newPlayer) {
+//        try {
+//            dOut.writeObject(newPlayer);
+//            dOut.flush();
+//        } catch (IOException ex) {
+//            System.out.println("Player not sent");
+//            ex.printStackTrace();
+//        }
+//    }
+
+    public void sendPlayerInfo(int id, String name) {
         try {
-            dOut.writeObject(newPlayer);
+            dOut.writeUTF(String.valueOf(id) + ":" + name);
             dOut.flush();
         } catch (IOException ex) {
             System.out.println("Player not sent");
             ex.printStackTrace();
         }
     }
-
 
     /*
      * receive scores of other players
@@ -163,7 +172,7 @@ public class Connection {
         try {
             return dIn.readInt();
         } catch (IOException e) {
-            System.out.println("Score sheet not received");
+            System.out.println("Round No. not received");
             e.printStackTrace();
         }
         return 0;

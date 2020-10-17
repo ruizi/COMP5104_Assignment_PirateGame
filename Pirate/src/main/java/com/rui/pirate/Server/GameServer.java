@@ -24,6 +24,12 @@ public class GameServer implements Serializable {
         gameServer.gameLoop();
     }
 
+    public void startServer() throws ClassNotFoundException, IOException {
+        this.acceptConnections();
+        this.printPlayerScores();
+        this.gameLoop();
+    }
+
     //initial the game server
     public GameServer() {
         System.out.println("Starting game server");
@@ -61,11 +67,17 @@ public class GameServer implements Serializable {
                 serverThread.getdOut().flush();
 
                 // get the player name
-                Player connectingIn = (Player) serverThread.getdIn().readObject();
-                System.out.println("Player " + serverThread.getPlayerId() + " ~ " + connectingIn.name + " ~ has joined");
+                //Player connectingIn = (Player) serverThread.getdIn().readObject();
+
+                String playerInfo = serverThread.getPlayerInfo();
+                int playerID = Integer.parseInt(playerInfo.split(":")[0]);
+                String playerName = playerInfo.split(":")[1];
+                System.out.println("Player " + serverThread.getPlayerId() + " ~ " + playerName + " ~ has joined");
+                //System.out.println("Player " + serverThread.getPlayerId() + " ~ " + connectingIn.name + " ~ has joined");
+                Player newPlayer = new Player(playerName, playerID);
 
                 // add the player to the player list
-                players[serverThread.getPlayerId() - 1] = connectingIn; //add player to the player array in server.
+                players[serverThread.getPlayerId() - 1] = newPlayer; //add player to the player array in server.
                 playerServerThread[PlayerID - 1] = serverThread;
             }
             System.out.println("Three players have joined the game");
@@ -115,6 +127,10 @@ public class GameServer implements Serializable {
         return winnerID;
     }
 
+    public void closeSS() throws IOException {
+        ss.close();
+    }
+
     public void printPlayerScores() {
         // print the score sheets
         System.out.println("|---------------------------------------------|");
@@ -124,23 +140,21 @@ public class GameServer implements Serializable {
         System.out.println("|---------------------------------------------|");
     }
 
-    public void gameLoop() { // the server main game loop.
+    public void gameLoop() throws IOException { // the server main game loop.
         try {
             playerServerThread[0].sendPlayers(players);
             playerServerThread[1].sendPlayers(players);
             playerServerThread[2].sendPlayers(players);
-
             while (!isEnd()) { //check if there is a winner
 
                 Round++;
 
                 // send the round number
                 System.out.println("*****************************************");
-                System.out.println("Round number " + Round);
+                System.out.println("Server:Round number " + Round);
                 playerServerThread[0].sendTurnNo(Round);
                 playerServerThread[0].sendScoreBoard(scoreBoard);
                 updateScoreBoard(playerServerThread[0].receiveScores());
-
                 System.out.println("Player 1 completed turn and the score is " + scoreBoard[0]);
 
                 playerServerThread[1].sendTurnNo(Round);
@@ -170,7 +184,9 @@ public class GameServer implements Serializable {
             for (int i = 0; i < playerServerThread.length; i++) {
                 playerServerThread[i].sendWinnerID(winnerID);//sent winner`s info to clients.
             }
+            ss.close();
         } catch (Exception e) {
+            ss.close();
             e.printStackTrace();
         }
     }

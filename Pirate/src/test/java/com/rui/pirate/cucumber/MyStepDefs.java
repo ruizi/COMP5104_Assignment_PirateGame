@@ -220,6 +220,7 @@ public class MyStepDefs {
         assertEquals(ExpectedScore, player.playerRound(card, dieRoll, game));
     }
 
+
     @Then("check the score board with expected score {int} for the player")
     public void check_the_score_board_with_expected_score_for_the_player(Integer changePoints) {
         assertEquals(Math.max(playerInitScore + changePoints, 0), player.getScoreBoardByID(1));
