@@ -98,10 +98,12 @@ public class Connection {
 
     public void sendPlayerInfo(int id, String name) {
         try {
-            dOut.writeUTF(String.valueOf(id) + ":" + name);
+//            System.out.println("send" + id);
+//            System.out.println("send" + name);
+            dOut.writeUTF(id + ":" + name);
             dOut.flush();
         } catch (IOException ex) {
-            System.out.println("Player not sent");
+            System.out.println("Player info not sent");
             ex.printStackTrace();
         }
     }

@@ -12,6 +12,7 @@ public class ServerThread implements Runnable {
     private ObjectInputStream dIn;
     private ObjectOutputStream dOut;
     private int playerId;
+    private volatile boolean exit = false;
 
     public ServerThread(Socket s, int playerid) {
         socket = s;
@@ -29,7 +30,7 @@ public class ServerThread implements Runnable {
      */
     public void run() {
         try {
-            while (true) {
+            while (!exit) {
             }
 
         } catch (Exception ex) {
@@ -38,6 +39,10 @@ public class ServerThread implements Runnable {
                 ex.printStackTrace();
             }
         }
+    }
+
+    public void stop() {
+        exit = true;
     }
 
     public void setPlayerId(int playerId) {

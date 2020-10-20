@@ -185,6 +185,9 @@ public class GameServer implements Serializable {
                 playerServerThread[i].sendWinnerID(winnerID);//sent winner`s info to clients.
             }
             ss.close();
+            playerServerThread[0].stop();
+            playerServerThread[1].stop();
+            playerServerThread[2].stop();
         } catch (Exception e) {
             ss.close();
             e.printStackTrace();

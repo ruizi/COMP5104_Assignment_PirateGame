@@ -86,7 +86,7 @@ public class MyStepDefsForLevel2 {
         //round = players[playerId - 1].getClientConnection().receiveRoundNo();//receive the round num from server.
         players[playerId - 1].setRound(players[playerId - 1].getClientConnection().receiveRoundNo());
         if (players[playerId - 1].getRound() != -1) {
-            System.out.println("\n \n \n ********Round Number " + players[playerId - 1].getRound() + "********");
+            System.out.println("\n \n \n **********Round Number " + players[playerId - 1].getRound() + " / Player:" + playerId + "**********");
         } else {
             System.out.println("For Player " + playerId + ": winner is born, game ends");
         }

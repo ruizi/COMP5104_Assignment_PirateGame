@@ -250,7 +250,7 @@ public class Player implements Serializable {
             round = clientConnection.receiveRoundNo();//receive the round num from server.
             if (round == -1) //if the server return round num by -1, means the game ends with a player wins.
                 break;
-            System.out.println("\n \n \n ********Round Number " + round + "********");
+            System.out.println("\n \n \n **********Round Number " + round + " / Player:" + name + "**********");
             scoreBoard = clientConnection.receiveScoreBoard();//receive the latest score board from server
             game.printPlayerScores(players, scoreBoard); //print the score board.
             ticket = true;
