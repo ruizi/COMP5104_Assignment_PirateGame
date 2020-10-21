@@ -112,6 +112,7 @@ public class MyStepDefsForLevel2 {
     public void the_player_draw_a_card(Integer int1, String fortuneCard) {
         card = new Card(fortuneCard.trim());
         System.out.println("| CARD ===> " + card.getName());
+        input = "";
     }
 
     @When("the player {int} get the initial dieRoll")
@@ -128,7 +129,7 @@ public class MyStepDefsForLevel2 {
     @When("the player {int} chose to hold {string}")
     public void the_player_chose_to_hold(Integer int1, String hold) {
         input += hold;
-        System.out.println(input);
+        //System.out.println(input);
     }
 
     @When("the player {int} get {string} after re-roll")
@@ -138,7 +139,6 @@ public class MyStepDefsForLevel2 {
 
     @When("the player {int} input {int} for menu input")
     public void the_player_input_for_menu_input(Integer playerId, Integer menuInput) {
-        input = "";
         input += menuInput + " ";
     }
 

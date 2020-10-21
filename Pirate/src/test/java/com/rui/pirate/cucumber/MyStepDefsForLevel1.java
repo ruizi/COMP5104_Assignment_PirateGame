@@ -17,7 +17,7 @@ import java.util.Scanner;
 
 import static org.junit.Assert.*;
 
-public class MyStepDefs {
+public class MyStepDefsForLevel1 {
     public final Player player = new Player("Test");
     GameService game;
     Card card;

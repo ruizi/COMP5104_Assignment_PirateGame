@@ -9,7 +9,7 @@ import cucumber.api.junit.Cucumber;
 
 
 @RunWith(Cucumber.class)
-@CucumberOptions(features = {"src/test/java/com/rui/pirate/cucumber/basicDyingAndScoring.feature", "src/test/java/com/rui/pirate/cucumber/advancedScoring.feature", "src/test/java/com/rui/pirate/cucumber/networkedGameTest.feature"})
+@CucumberOptions(features = {"src/test/java/com/rui/pirate/cucumber/Level1a.feature", "src/test/java/com/rui/pirate/cucumber/Level1b.feature", "src/test/java/com/rui/pirate/cucumber/Level2.feature"})
 @Suite.SuiteClasses({
 
 })
