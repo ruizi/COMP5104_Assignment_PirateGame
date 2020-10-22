@@ -65,6 +65,10 @@ Feature: The level 1b: Advanced scoring
 
   @row83
   Scenario: Treasure Chest operations row 83
+  roll 3 parrots, 2 swords, 2 diamonds, 1 coin     put 2 diamonds and 1 coin in chest
+  then re-roll 2 swords and get 2 parrots put 5 parrots in chest and take out 2 diamonds & coin
+  then re-roll the 3 dice and get 1 skull, 1 coin and a parrot
+  score 6 parrots + 1 coin for 1100 points
     Given the fortune card is "Treasure Chest"
     When the player got "parrot, parrot, parrot, sword, sword, diamond, diamond, coin" on first roll
     And the player chose 3 for menuChoice
@@ -85,6 +89,10 @@ Feature: The level 1b: Advanced scoring
 
   @row87
   Scenario: Treasure Chest operations row 87
+  roll 2 skulls, 3 parrots, 3 coins   put 3 coins in chest
+  then re-rolls 3 parrots and get 2 diamonds 1 coin    put coin in chest (now 4)
+  then re-roll 2 diamonds and get 1 skull 1 coin     SC for chest only = 400 + 200 = 600
+  also interface reports death & end of turn
     Given the fortune card is "Treasure Chest"
     When the player got "skull, skull, parrot, parrot, parrot, coin, coin, coin" on first roll
     And the player chose 3 for menuChoice
