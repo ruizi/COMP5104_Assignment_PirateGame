@@ -17,7 +17,7 @@ Feature: LEVEL 2:  NETWORKED GAME TEST (20 points)
     And the Server start the game loop
     When the player 1 received round num from server
     And the player 1 received score board from server
-    And the player 1 draw a "Captain" card
+    And the player 1 draw a "Diamond" card
     And the player 1 got "sword, sword, sword, coin, coin, coin, coin, coin" on his first roll
     And the player 1 input 2 for menu input
     And the player 1 chose to hold "4,5,6,7,8 "
@@ -34,17 +34,10 @@ Feature: LEVEL 2:  NETWORKED GAME TEST (20 points)
 
     And the player 3 received round num from server
     And the player 3 received score board from server
-    And the player 3 draw a "Two Sabre" card
+    And the player 3 draw a "Two Skulls" card
     And the player 3 got "sword, sword, monkey, coin, coin, parrot, skull, skull" on his first roll
     And the player 3 input 1 for menu input
     And the player 3 send his score to server
-
-    And the player 1 received round num from server
-    And the player 1 received score board from server
-    And the player 1 draw a "Two Sabre" card
-    And the player 1 got "sword, monkey, monkey, coin, coin, parrot, skull, skull" on his first roll
-    And the player 1 input 1 for menu input
-    And the player 1 send his score to server
 
     Then end the server
     
