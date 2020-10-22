@@ -34,7 +34,7 @@ Feature: LEVEL 2:  NETWORKED GAME TEST (20 points)
 
     And the player 3 received round num from server
     And the player 3 received score board from server
-    And the player 3 draw a "Two Skulls" card
+    And the player 3 draw a "Two Skull" card
     And the player 3 got "sword, sword, monkey, coin, coin, parrot, skull, skull" on his first roll
     And the player 3 input 1 for menu input
     And the player 3 send his score to server
