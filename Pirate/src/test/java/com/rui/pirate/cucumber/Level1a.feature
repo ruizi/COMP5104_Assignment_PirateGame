@@ -5,14 +5,11 @@ Feature: The level 1a: Basic Dying and Scoring
     Given the game service started
 
   @row38
-  Scenario Outline: die with 3 skulls on first roll -> interface reports death & end of turn
+  Scenario: die with 3 skulls on first roll -> interface reports death & end of turn
     Given the fortune card is "Gold"
-    When the player got <dieRoll> on first roll
+    When the player got "skull, skull, skull, coin, diamond, diamond, diamond, diamond" on first roll
     And run the play round
-    Then interface reports death & end of turn
-    Examples:
-      | dieRoll                                                         |
-      | "skull, skull, skull, coin, diamond, diamond, diamond, diamond" |
+    And interface reports death & end of turn
 
   @row39,40
   Scenario Outline: die at the second roll.
@@ -23,7 +20,8 @@ Feature: The level 1a: Basic Dying and Scoring
     And the player chose <menuChoices>
     And the player hold <holdDice>
     And set re-roll with <riggedReRoll>
-    Then interface reports death & end of turn
+    Then player chooses to score board with expected score 0
+    And interface reports death & end of turn
     Examples:
       | id | Grid Row | card    | dieRoll                                                      | menuChoices | holdDice   | riggedReRoll          |
       | 1  | 39       | "Gold " | "skull, parrot, parrot, parrot, parrot, sword, sword, sword" | 2           | "2,3,4,5 " | "skull, skull, sword" |
@@ -40,6 +38,7 @@ Feature: The level 1a: Basic Dying and Scoring
     And the player chose 2
     And the player hold "2,3,4,5 "
     And set re-roll with "skull, monkey"
+    Then player chooses to score board with expected score 0
     Then interface reports death & end of turn
 
   @score_at_first_roll
