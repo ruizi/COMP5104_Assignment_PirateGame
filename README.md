@@ -4,6 +4,7 @@ Youtube Videos Links here:
 
 ---
 Assignment 2:
+
 The video for a real game loop and test suite : https://youtu.be/eg7qiD4aVDE
 
 The video for LEVEL 1a: BASIC DYING and SCORING : https://youtu.be/tFL8w2W859o
